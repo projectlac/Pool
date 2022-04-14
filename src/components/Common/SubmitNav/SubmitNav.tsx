@@ -3,7 +3,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 const BoxNav = styled(Box)({
   height: '65px',
-  position: 'absolute',
+  position: 'fixed',
   width: ' calc(100% - 280px)',
   marginLeft: '-24px',
   display: 'flex',

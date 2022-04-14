@@ -2,19 +2,13 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useState } from 'react';
 
 export default function TinyEditor({ initialValue, limit, handleGetDataFromEditor }) {
-    const sizeLimit = limit ?? 50;
+    const sizeLimit = limit ?? 99999999;
     const [value, setValue] = useState(initialValue);
-    const [length, setLength] = useState(0);
-
-    const handleInit = (evt, editor) => {
-        setLength(editor.getContent({ format: 'text' }).length);
-    };
 
     const handleUpdate = (value, editor) => {
         const length = editor.getContent({ format: 'text' }).length;
         if (length <= sizeLimit) {
-            setValue(value);
-            setLength(length);
+            setValue(value); 
             handleGetDataFromEditor(value);
         }
     };
@@ -34,11 +28,10 @@ export default function TinyEditor({ initialValue, limit, handleGetDataFromEdito
                 apiKey="jvnq0huwvxzja1sev6byqabo1g6qc276no4top15pw2m6odd"
                 initialValue={initialValue}
                 value={value}
-                onInit={handleInit}
                 onEditorChange={handleUpdate}
                 onBeforeAddUndo={handleBeforeAddUndo}
                 init={{
-                    height: 400,
+                    height: 300,
                     menubar: false,
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
@@ -56,7 +49,7 @@ export default function TinyEditor({ initialValue, limit, handleGetDataFromEdito
                     branding: false
                 }}
             />
-            <p>Remaining: {sizeLimit - length}</p>
+        
         </>
     );
 };

@@ -9,7 +9,7 @@ const ButtonApply = styled(Button)(
      color: ${theme.palette.primary.main};
      border:1px solid #c9c9c9;
      &:hover {
-        background: ${theme.colors.error.dark};
+        background: #c1c1c1;
      }
     `
 );
@@ -25,6 +25,7 @@ function BulkActions({ selectedCryptoOrders }: Props) {
           <ButtonApply
             sx={{ ml: 1 }}
             variant="contained"
+            disabled={selectedCryptoOrders.length === 0 ? true : false}
             onClick={() => {
               console.log(selectedCryptoOrders);
             }}

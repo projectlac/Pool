@@ -16,9 +16,9 @@ import {
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
+import BulkActions from 'src/components/Common/BulkAction/BulkActions';
 import Pagination from 'src/components/Common/Pagination/Pagination';
 import { CryptoOrder, CryptoOrderStatus } from 'src/models/crypto_order';
-import BulkActions from './BulkActions';
 
 interface RecentOrdersTableProps {
   className?: string;
