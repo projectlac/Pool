@@ -19,6 +19,13 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
       'background-color',
       'box-shadow'
     ]),
+    '&[aria-invalid="true"]': {
+      border: `1px solid ${theme.palette.error.main}`,
+      '&:focus': {
+        boxShadow: 'rgb(255 0 0 / 25%) 0 0 0 0.2rem',
+        borderColor: theme.palette.error.main
+      }
+    },
     // Use the system font instead of the default Roboto font.
     fontFamily: [
       'farro',

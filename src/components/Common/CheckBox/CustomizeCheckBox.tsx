@@ -7,15 +7,30 @@ import FormControl from '@mui/material/FormControl';
 interface PropCustomizeCheckbox {
   listData: string[];
   defaultValue: string;
+  title: string;
+  indexQuestion: number;
+  handleCheckBox: (
+    checked: string,
+    title: string,
+    indexQuestion: number
+  ) => void;
 }
 export default function CustomizeCheckBox({
   listData,
-  defaultValue
+  defaultValue,
+  title,
+  indexQuestion,
+  handleCheckBox
 }: PropCustomizeCheckbox) {
   const [value, setValue] = React.useState(defaultValue);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue((event.target as HTMLInputElement).value);
+    handleCheckBox(
+      (event.target as HTMLInputElement).value,
+      title,
+      indexQuestion
+    );
   };
 
   return (

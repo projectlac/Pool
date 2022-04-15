@@ -1,7 +1,7 @@
 import { Editor } from '@tinymce/tinymce-react';
 import { useState } from 'react';
 
-export default function TinyEditor({ initialValue, limit, title, handleGetDataFromEditor }) {
+export default function TinyEditorQuestionMode({ initialValue, limit, handleGetDataFromEditor, indexQuestion }) {
     const sizeLimit = limit ?? 99999999;
     const [value, setValue] = useState(initialValue);
 
@@ -9,7 +9,7 @@ export default function TinyEditor({ initialValue, limit, title, handleGetDataFr
         const length = editor.getContent({ format: 'text' }).length;
         if (length <= sizeLimit) {
             setValue(value);
-            handleGetDataFromEditor(value, title);
+            handleGetDataFromEditor(value, indexQuestion);
         }
     };
 

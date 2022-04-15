@@ -43,6 +43,23 @@ const AddSurvey = Loader(
   lazy(() => import('src/content/applications/Survey/Add/index'))
 );
 
+const User = Loader(lazy(() => import('src/content/applications/User')));
+const AddUser = Loader(
+  lazy(() => import('src/content/applications/User/Add/index'))
+);
+
+const Individual = Loader(
+  lazy(() => import('src/content/applications/Outlet/Individual'))
+);
+const AddIndividual = Loader(
+  lazy(() => import('src/content/applications/Outlet/Individual/Add/index'))
+);
+const Groups = Loader(
+  lazy(() => import('src/content/applications/Outlet/Groups'))
+);
+const AddGroups = Loader(
+  lazy(() => import('src/content/applications/Outlet/Groups/Add/index'))
+);
 // const UserProfile = Loader(
 //   lazy(() => import('src/content/applications/Users/profile'))
 // );
@@ -130,6 +147,42 @@ const routes = (isLogin) => [
     ]
   },
   {
+    path: 'outlet',
+    element: isLogin ? (
+      <SidebarLayout />
+    ) : (
+      <Navigate to={`${process.env.REACT_APP_BASE_NAME}/login`} replace />
+    ),
+
+    children: [
+      {
+        path: '/',
+        element: (
+          <Navigate
+            to={`${process.env.REACT_APP_BASE_NAME}/outlet/groups`}
+            replace
+          />
+        )
+      },
+      {
+        path: '/groups',
+        element: <Groups />
+      },
+      {
+        path: '/groups/add',
+        element: <AddGroups />
+      },
+      {
+        path: '/individual',
+        element: <Individual />
+      },
+      {
+        path: '/individual/add',
+        element: <AddIndividual />
+      }
+    ]
+  },
+  {
     path: 'content-pack',
     element: isLogin ? (
       <SidebarLayout />
@@ -164,6 +217,25 @@ const routes = (isLogin) => [
       {
         path: '/add',
         element: <AddSurvey />
+      }
+    ]
+  },
+  {
+    path: 'user',
+    element: isLogin ? (
+      <SidebarLayout />
+    ) : (
+      <Navigate to={`${process.env.REACT_APP_BASE_NAME}/login`} replace />
+    ),
+
+    children: [
+      {
+        path: '/',
+        element: <User />
+      },
+      {
+        path: '/add',
+        element: <AddUser />
       }
     ]
   },

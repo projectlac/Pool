@@ -10,22 +10,22 @@ function AddNewPack() {
   return (
     <>
       <Helmet>
-        <title>New Survey</title>
+        <title>New Outlet</title>
       </Helmet>
       <PageTitleWrapper>
         <Link
-          to={`${process.env.REACT_APP_BASE_NAME}/survey`}
+          to={`${process.env.REACT_APP_BASE_NAME}/outlet/individual`}
           style={{ textDecoration: 'none', color: '#044b7e' }}
         >
           <Typography
             sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}
           >
             <LeftArrow style={{ transform: 'scale(2)', marginRight: '10px' }} />
-            <span>back to Survey Listening</span>
+            <span>back to Outlet Listening</span>
           </Typography>
         </Link>
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <PageHeader title={'New Survey'} />
+          <PageHeader title={'New Outlet'} />
         </Box>
       </PageTitleWrapper>
       <Container maxWidth="xl">

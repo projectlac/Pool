@@ -4,6 +4,10 @@ import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
 import AllOutIcon from '@mui/icons-material/AllOut';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 
+export interface ChildItem {
+  name: string;
+  link: string;
+}
 export interface MenuItem {
   link?: string;
   icon?: ReactNode;
@@ -25,9 +29,19 @@ const menuItems: MenuItems[] = [
         icon: AssessmentIcon
       },
       {
-        name: 'Outlook',
+        name: 'Outlet',
         icon: TableChartTwoToneIcon,
-        link: `${process.env.REACT_APP_BASE_NAME}/facade/screensaver`
+        link: `${process.env.REACT_APP_BASE_NAME}/outlet`,
+        items: [
+          {
+            name: 'Groups',
+            link: `${process.env.REACT_APP_BASE_NAME}/outlet/groups`
+          },
+          {
+            name: 'Individual',
+            link: `${process.env.REACT_APP_BASE_NAME}/outlet/individual`
+          }
+        ]
       },
       {
         name: 'Content pack',
@@ -42,7 +56,7 @@ const menuItems: MenuItems[] = [
       {
         name: 'User',
         icon: AllOutIcon,
-        link: `${process.env.REACT_APP_BASE_NAME}/facade/hotspot`
+        link: `${process.env.REACT_APP_BASE_NAME}/user`
       }
     ]
   }

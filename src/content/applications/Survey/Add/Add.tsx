@@ -14,8 +14,10 @@ import { useForm } from 'react-hook-form';
 import CustomizedAccordions from 'src/components/Common/Accordions/CustomizedAccordions';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
+import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import TinyEditor from 'src/components/TinyEditor/TinyEditor';
+import { ContentQuestion } from 'src/models';
 import { fileObject } from 'src/models/fileObject';
 
 function Add() {
@@ -26,6 +28,13 @@ function Add() {
     new Date('2014-08-18T21:11:54')
   );
 
+  const [contentQuestion, setContentQuestion] = React.useState<
+    ContentQuestion[]
+  >([]);
+
+  const handleSetContentQuestion = (content: ContentQuestion[]) => {
+    setContentQuestion(content);
+  };
   const handleChange = (event: SelectChangeEvent) => {
     setNumberOfQuestions(event.target.value);
   };
@@ -35,12 +44,23 @@ function Add() {
   const handleChangeTimeTo = (newValue: Date | null) => {
     setSurveyDurationTo(newValue);
   };
-  const { register, handleSubmit, setValue } = useForm();
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    setValue,
+    formState: { errors }
+  } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  });
   const [fileList, setFileList] = useState<fileObject[]>([]);
+
   const onSubmit = (data) => {
-    const { contentName } = data;
-    //
-    console.log(fileList, contentName);
+    console.log('contentQuestion', contentQuestion);
+    console.log(data);
+    console.log('from', surveyDurationFrom);
+    console.log('to', surveyDurationTo);
   };
 
   const submitFromNav = () => {
@@ -50,9 +70,18 @@ function Add() {
     setFileList(file);
   };
 
-  const handleGetDataFromEditor = (data: string) => {
-    console.log(data);
+  const handleGetDataFromEditor = (data: string, title: string) => {
+    setValue(title, data);
   };
+
+  useEffect(() => {
+    register('bodyWelcome');
+    register('bodyThankYou');
+    register('bodyExpired');
+    trigger('bodyWelcome');
+    trigger('bodyThankYou');
+    trigger('bodyExpired');
+  }, []);
 
   return (
     <Grid container>
@@ -62,7 +91,10 @@ function Add() {
             <Grid item md={6}>
               <FormControl variant="standard" sx={{ width: '100%' }}>
                 <LabelInput shrink htmlFor="bootstrap-input">
-                  Survey Name
+                  Survey Name{' '}
+                  {errors.surveyName && (
+                    <ErrorTitle>*This field is require</ErrorTitle>
+                  )}
                 </LabelInput>
                 <BootstrapInput
                   sx={{
@@ -72,10 +104,11 @@ function Add() {
                       height: '35px'
                     }
                   }}
+                  error={errors.surveyName ? true : false}
                   defaultValue=""
                   placeholder="Default input"
                   id="bootstrap-input"
-                  {...register('contentName')}
+                  {...register('surveyName', { required: true })}
                 />
               </FormControl>
               <Box sx={{ mt: 3 }}>
@@ -91,11 +124,12 @@ function Add() {
                 </Typography>
                 <TextField
                   sx={{
-                    width: '100%'
+                    width: '100%',
+                    background: '#fff'
                   }}
                   multiline
                   rows={4}
-                  maxRows={4}
+                  {...register('surveyDescription')}
                 />
               </Box>
             </Grid>
@@ -162,7 +196,10 @@ function Add() {
               <Box sx={{ mt: 3 }}>
                 <FormControl variant="standard" sx={{ width: '100%' }}>
                   <LabelInput shrink htmlFor="bootstrap-input">
-                    Header
+                    Header{' '}
+                    {errors.headerWelcome && (
+                      <ErrorTitle>*This field is require</ErrorTitle>
+                    )}
                   </LabelInput>
                   <BootstrapInput
                     sx={{
@@ -172,10 +209,11 @@ function Add() {
                         height: '35px'
                       }
                     }}
+                    error={errors.headerWelcome ? true : false}
                     defaultValue=""
                     placeholder="Default input"
                     id="bootstrap-input"
-                    {...register('header')}
+                    {...register('headerWelcome', { required: true })}
                   />
                 </FormControl>
               </Box>
@@ -194,8 +232,9 @@ function Add() {
                   </Typography>
                   <TinyEditor
                     initialValue={''}
-                    limit
+                    limit={9999999999}
                     handleGetDataFromEditor={handleGetDataFromEditor}
+                    title={'bodyWelcome'}
                   />
                 </FormControl>
               </Box>
@@ -245,7 +284,112 @@ function Add() {
               </Box>
 
               <Box sx={{ mt: 3 }}>
-                <CustomizedAccordions numberOfQuestions={+numberOfQuestions} />
+                <CustomizedAccordions
+                  numberOfQuestions={+numberOfQuestions}
+                  handleSetContentQuestion={handleSetContentQuestion}
+                />
+              </Box>
+            </Grid>
+          </Box>
+
+          <Box mt={8} mb={9}>
+            <Grid item md={6}>
+              <Typography variant="h3">PART III: THANK YOU</Typography>
+              <Box sx={{ mt: 3 }}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <LabelInput shrink htmlFor="bootstrap-input">
+                    Header
+                    {errors.headerThankYou && (
+                      <ErrorTitle>*This field is require</ErrorTitle>
+                    )}
+                  </LabelInput>
+                  <BootstrapInput
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        border: '1px solid #ddd',
+                        background: '#fff',
+                        height: '35px'
+                      }
+                    }}
+                    error={errors.headerThankYou ? true : false}
+                    defaultValue=""
+                    placeholder="Default input"
+                    id="bootstrap-input"
+                    {...register('headerThankYou', { required: true })}
+                  />
+                </FormControl>
+              </Box>
+
+              <Box sx={{ mt: 3 }}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: '17px',
+                      fontWeight: 'bold',
+                      color: '#044b7e',
+                      mb: 1
+                    }}
+                  >
+                    Body Text
+                  </Typography>
+                  <TinyEditor
+                    initialValue={''}
+                    limit={9999999999}
+                    title={'bodyThankYou'}
+                    handleGetDataFromEditor={handleGetDataFromEditor}
+                  />
+                </FormControl>
+              </Box>
+            </Grid>
+          </Box>
+
+          <Box mt={8} mb={9}>
+            <Grid item md={6}>
+              <Typography variant="h3">PART IV: EXPIRED</Typography>
+              <Box sx={{ mt: 3 }}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <LabelInput shrink htmlFor="bootstrap-input">
+                    Header
+                    {errors.headerExpired && (
+                      <ErrorTitle>*This field is require</ErrorTitle>
+                    )}
+                  </LabelInput>
+                  <BootstrapInput
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        border: '1px solid #ddd',
+                        background: '#fff',
+                        height: '35px'
+                      }
+                    }}
+                    error={errors.headerExpired ? true : false}
+                    defaultValue=""
+                    placeholder="Default input"
+                    id="bootstrap-input"
+                    {...register('headerExpired', { required: true })}
+                  />
+                </FormControl>
+              </Box>
+
+              <Box sx={{ mt: 3 }}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <Typography
+                    sx={{
+                      fontSize: '17px',
+                      fontWeight: 'bold',
+                      color: '#044b7e',
+                      mb: 1
+                    }}
+                  >
+                    Body Text
+                  </Typography>
+                  <TinyEditor
+                    initialValue={''}
+                    limit={9999999999}
+                    title={'bodyExpired'}
+                    handleGetDataFromEditor={handleGetDataFromEditor}
+                  />
+                </FormControl>
               </Box>
             </Grid>
           </Box>

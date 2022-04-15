@@ -6,8 +6,7 @@ import { SidebarContext } from 'src/contexts/SidebarContext';
 import PropTypes from 'prop-types';
 import { Button, Badge, Collapse, ListItem } from '@mui/material';
 
-import ExpandLessTwoToneIcon from '@mui/icons-material/ExpandLessTwoTone';
-import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 interface SidebarMenuItemProps {
   children?: ReactNode;
@@ -29,28 +28,81 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   name,
   ...rest
 }) => {
-  const [menuToggle, setMenuToggle] = useState<boolean>(openParent);
-
   const { toggleSidebar, localToggle } = useContext(SidebarContext);
-
-  const toggleMenu = (): void => {
-    setMenuToggle((Open) => !Open);
-  };
 
   if (children) {
     return (
-      <ListItem component="div" className="Mui-children" key={name} {...rest}>
-        <Button
-          className={clsx({ 'Mui-active': menuToggle })}
-          startIcon={Icon && <Icon />}
-          endIcon={
-            menuToggle ? <ExpandLessTwoToneIcon /> : <ExpandMoreTwoToneIcon />
+      <ListItem
+        component="div"
+        className="Mui-children"
+        key={name}
+        {...rest}
+        sx={{
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            width: '45px',
+            height: '58%',
+            background: `${
+              localToggle
+                ? 'transparent'
+                : `${openParent ? '#e9ecef' : 'transparent'}`
+            }`,
+            right: '0',
+            top: '10px',
+            borderTopLeftRadius: '16px'
+          },
+          '& a': {
+            color: `${
+              localToggle ? 'transparent !important' : '#044b7e !important'
+            }`
           }
-          onClick={toggleMenu}
+        }}
+      >
+        <Button
+          component={RouterLink}
+          className={clsx({ 'Mui-Parent-active': openParent })}
+          startIcon={Icon && <Icon />}
+          to={link}
+          endIcon={openParent ? <ArrowDropDownIcon /> : ''}
         >
           {name}
         </Button>
-        <Collapse in={menuToggle}>{children}</Collapse>
+        {localToggle ? (
+          ''
+        ) : (
+          <Collapse
+            className={clsx({ 'Mui-active Mui-childList': openParent })}
+            in={openParent}
+            sx={{
+              '& ul div:last-child': {
+                position: 'relative'
+              },
+              '& ul div:last-child .Mui-active::before': {
+                content: '""',
+                position: 'absolute',
+                width: '45px',
+                height: '101%',
+                background: '#e9ecef',
+                right: '0',
+                bottom: '2px',
+                zIndex: '9'
+              },
+              '& ul div a': {
+                fontSize: '1rem !important',
+                paddingTop: '12px !important',
+                paddingBottom: '12px !important'
+              },
+              '& ul .Mui-active': {
+                backgroundColor: '#e9ecef !important',
+                transition: `all 0s !important`
+              }
+            }}
+          >
+            {children}
+          </Collapse>
+        )}
       </ListItem>
     );
   }
@@ -60,11 +112,14 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
       <Button
         activeClassName="Mui-active"
         component={RouterLink}
-        onClick={toggleSidebar}
+        onClick={() => {
+          toggleSidebar();
+        }}
         to={link}
         startIcon={Icon && <Icon />}
       >
         {localToggle ? '' : name}
+
         {badge && <Badge badgeContent={badge} />}
       </Button>
     </ListItem>

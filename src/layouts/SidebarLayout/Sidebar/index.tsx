@@ -96,6 +96,9 @@ function Sidebar() {
           onClose={closeSidebar}
           variant="temporary"
           elevation={9}
+          sx={{
+            '& .MuiDrawer-paper': { width: `${sidebarToggle ? '280px' : '0'}` }
+          }}
         >
           <SidebarWrapper>
             <Scrollbars autoHide>

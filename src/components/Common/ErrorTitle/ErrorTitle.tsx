@@ -1,10 +1,10 @@
-import InputLabel from '@mui/material/InputLabel';
 import { alpha, styled } from '@mui/material/styles';
-const LabelInput = styled(InputLabel)(({ theme }) => ({
-  fontSize: 22,
-  fontWeight: 'bold',
-  display: 'flex',
-  color: theme.palette.primary.main,
+import { Typography } from '@mui/material';
+const ErrorTitle = styled(Typography)(({ theme }) => ({
+  fontSize: 21,
+  fontWeight: 'normal',
+  marginLeft: '15px',
+  color: theme.palette.error.main,
   // Use the system font instead of the default Roboto font.
   fontFamily: [
     'farro',
@@ -21,4 +21,4 @@ const LabelInput = styled(InputLabel)(({ theme }) => ({
     'Segoe UI Symbol'
   ].join(',')
 }));
-export default LabelInput;
+export default ErrorTitle;

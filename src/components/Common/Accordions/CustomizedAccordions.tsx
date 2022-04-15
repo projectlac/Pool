@@ -1,15 +1,19 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import { FormControl, Grid } from '@mui/material';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import MuiAccordionSummary, {
   AccordionSummaryProps
 } from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/system';
+import * as React from 'react';
+import TinyEditorQuestionMode from 'src/components/TinyEditor/TinyEditorQuestionMode';
+import { ContentQuestion } from 'src/models';
 import CustomizeCheckBox from '../CheckBox/CustomizeCheckBox';
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import SurveyAnswers from '../SurveyAnswers/SurveyAnswers';
+import UploadTableSurvey from '../Table/UploadTableSurvey';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -49,11 +53,18 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 interface PropsAccordions {
   numberOfQuestions: number;
+  handleSetContentQuestion: (content: ContentQuestion[]) => void;
 }
 export default function CustomizedAccordions({
-  numberOfQuestions
+  numberOfQuestions,
+  handleSetContentQuestion
 }: PropsAccordions) {
-  const [numberOfAnswer, setNumberOfAnswer] = React.useState<string>('2');
+  const handleGetDataFromEditor = (data: string, index: number) => {
+    let tempContetQuestion = [...contentQuestion];
+    tempContetQuestion[index].caption = data;
+    setContentQuestion(tempContetQuestion);
+    handleSetContentQuestion(tempContetQuestion);
+  };
 
   const [expanded, setExpanded] = React.useState<string | false>(
     `panel${numberOfQuestions - 1}`
@@ -64,13 +75,48 @@ export default function CustomizedAccordions({
       setExpanded(newExpanded ? panel : false);
     };
 
-  const handleChangeNumberOfAnswer = (event: SelectChangeEvent) => {
-    setNumberOfAnswer(event.target.value);
+  const handleUptateListAnswer = (listAnswer: string[], index: number) => {
+    let tempContetQuestion = [...contentQuestion];
+    tempContetQuestion[index].listAnswer = listAnswer;
+    setContentQuestion(tempContetQuestion);
+    handleSetContentQuestion(tempContetQuestion);
   };
+
+  const handleCheckBox = (checked: string, title: string, index: number) => {
+    let tempContetQuestion = [...contentQuestion];
+    tempContetQuestion[index][title] = checked;
+    setContentQuestion(tempContetQuestion);
+    handleSetContentQuestion(tempContetQuestion);
+  };
+
+  const handleUploadFile = (file: File, index: number) => {
+    let tempContetQuestion = [...contentQuestion];
+    tempContetQuestion[index].file = file;
+    setContentQuestion(tempContetQuestion);
+    handleSetContentQuestion(tempContetQuestion);
+  };
+  const [contentQuestion, setContentQuestion] = React.useState<
+    ContentQuestion[]
+  >([
+    {
+      questionType: 'Optional',
+      typeOfQuestion: 'Image with caption',
+      caption: '',
+      listAnswer: ['', '', '', '', ''],
+      file: undefined
+    },
+    {
+      questionType: 'Optional',
+      typeOfQuestion: 'Image with caption',
+      caption: '',
+      listAnswer: ['', '', '', '', ''],
+      file: undefined
+    }
+  ]);
   return (
     <div>
       {[...Array(numberOfQuestions)].map((d, index) => (
-        <Box mb={1}>
+        <Box mb={1} key={index}>
           <Accordion
             expanded={expanded === `panel${index}`}
             onChange={handleChange(`panel${index}`)}
@@ -108,6 +154,9 @@ export default function CustomizedAccordions({
                 <CustomizeCheckBox
                   listData={['Mandatory', 'Optional']}
                   defaultValue={'Optional'}
+                  title={'questionType'}
+                  indexQuestion={index}
+                  handleCheckBox={handleCheckBox}
                 />
               </Box>
               <Box mb={3}>
@@ -124,47 +173,62 @@ export default function CustomizedAccordions({
                 <CustomizeCheckBox
                   listData={['Text', 'Image with caption']}
                   defaultValue={'Image with caption'}
+                  title={'typeOfQuestion'}
+                  indexQuestion={index}
+                  handleCheckBox={handleCheckBox}
                 />
               </Box>
-              <Box sx={{ mt: 3 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 'bold',
-                    color: '#044b7e',
-                    mb: 1
-                  }}
-                >
-                  Number of Answer options (Min. 2)
-                </Typography>
-                <Select
-                  value={numberOfAnswer}
-                  onChange={handleChangeNumberOfAnswer}
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  sx={{
-                    minWidth: 75,
-                    '& .MuiOutlinedInput-input': {
-                      background: '#fff',
-                      padding: '13px',
-                      color: '#000',
 
-                      fontSize: '16px',
-                      alignItems: 'center',
-                      display: 'flex'
-                    },
-                    '& fieldset': {
-                      borderColor: '#ddd'
-                    },
-                    '& .MuiSelect-icon': {
-                      color: '#044b7e'
-                    }
-                  }}
-                >
-                  <MenuItem value={'2'}>2</MenuItem>
-                  <MenuItem value={'3'}>3</MenuItem>
-                  <MenuItem value={'4'}>4</MenuItem>
-                  <MenuItem value={'5'}>5</MenuItem>
-                </Select>
+              <Box sx={{ mt: 3 }}>
+                <Grid item md={6}>
+                  {contentQuestion[index].typeOfQuestion ===
+                    'Image with caption' && (
+                    <UploadTableSurvey
+                      indexQuestion={index}
+                      numberOfContent="1"
+                      handleUploadFile={handleUploadFile}
+                    />
+                  )}
+
+                  <Box sx={{ mt: 3 }}>
+                    <FormControl variant="standard" sx={{ width: '100%' }}>
+                      <Typography
+                        sx={{
+                          fontSize: '17px',
+                          fontWeight: 'bold',
+                          color: '#044b7e',
+                          mb: 1
+                        }}
+                      >
+                        {contentQuestion[index].typeOfQuestion ===
+                        'Image with caption'
+                          ? 'Caption'
+                          : 'Content'}
+
+                        <span
+                          style={{
+                            fontSize: '13px',
+                            color: '#999',
+                            fontWeight: 'normal',
+                            marginLeft: '10px'
+                          }}
+                        >
+                          (Max. 250 characters)
+                        </span>
+                      </Typography>
+                      <TinyEditorQuestionMode
+                        initialValue={''}
+                        limit={250}
+                        handleGetDataFromEditor={handleGetDataFromEditor}
+                        indexQuestion={index}
+                      />
+                    </FormControl>
+                  </Box>
+                  <SurveyAnswers
+                    handleUptateListAnswer={handleUptateListAnswer}
+                    indexQuestion={index}
+                  />
+                </Grid>
               </Box>
             </AccordionDetails>
           </Accordion>
