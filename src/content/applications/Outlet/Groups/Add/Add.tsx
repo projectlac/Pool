@@ -1,18 +1,12 @@
-import {
-  Box,
-  FormControl,
-  Grid,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Typography
-} from '@mui/material';
-import React, { useState } from 'react';
+import { Box, FormControl, Grid } from '@mui/material';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
+import DnD from 'src/components/Common/Dnd/DnD';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
+
 function Add() {
   const {
     register,
@@ -23,18 +17,11 @@ function Add() {
     mode: 'onChange',
     reValidateMode: 'onChange'
   });
-  const [content, setContent] = useState<string>('Select a Content Pack');
-  const [survey, setSurvey] = useState<string>('Select a Survey');
+
   const onSubmit = (data) => {
     console.log(data);
   };
-  const handleChange = (e: SelectChangeEvent, title: string) => {
-    if (title === 'content') {
-      setContent(e.target.value);
-    } else {
-      setSurvey(e.target.value);
-    }
-  };
+
   const submitFromNav = () => {
     handleSubmit(onSubmit);
   };
@@ -72,7 +59,7 @@ function Add() {
             </Grid>
           </Box>
 
-          <Grid container spacing={5}>
+          {/* <Grid container spacing={5}>
             <Grid item md={6}>
               Tagged Outlet
             </Grid>
@@ -80,8 +67,8 @@ function Add() {
             <Grid item md={5}>
               Available Outlet
             </Grid>
-          </Grid>
-
+          </Grid> */}
+          <DnD />
           <SubmitNav onSubmit={submitFromNav} />
         </Box>
       </Grid>
