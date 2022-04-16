@@ -1,16 +1,23 @@
 import { Box, Container, Grid, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import PageHeader from 'src/components/Header/PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { ReactComponent as LeftArrow } from 'src/assets/images/svg/leftArrow.svg';
 import Add from './Add';
-function AddNewPack() {
+import { useParams } from 'react-router';
+function AddNewIndividual() {
+  const [edit, setEdit] = useState<boolean>(false);
+
+  const { id } = useParams();
+  useEffect(() => {
+    if (id !== undefined) setEdit(true);
+  }, [id]);
   return (
     <>
       <Helmet>
-        <title>New Outlet</title>
+        <title>{edit ? 'Edit Outlet' : 'New Outlet'}</title>
       </Helmet>
       <PageTitleWrapper>
         <Link
@@ -25,7 +32,7 @@ function AddNewPack() {
           </Typography>
         </Link>
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
-          <PageHeader title={'New Outlet'} />
+          <PageHeader title={edit ? 'Edit Outlet' : 'New Outlet'} />
         </Box>
       </PageTitleWrapper>
       <Container maxWidth="xl">
@@ -45,4 +52,4 @@ function AddNewPack() {
   );
 }
 
-export default AddNewPack;
+export default AddNewIndividual;

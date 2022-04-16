@@ -3,79 +3,8 @@ import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { string } from 'prop-types';
-export const data: OutletElement[] = [
-  {
-    id: '1',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '2',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '3',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '4',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '5',
-    OutletName: 'Call with Backend Team'
-  },
-  {
-    id: '6',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '7',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '8',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '9',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '10',
-    OutletName: 'Call with Backend Team'
-  },
-  {
-    id: '11',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '12',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '13',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '14',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '15',
-    OutletName: 'Call with Backend Team'
-  }
-];
+import { DataColumns, OutletElement } from 'src/models';
 
-export const columnsFromBackend = {
-  '1': {
-    title: 'Tagged Outlet',
-    items: [] as OutletElement[]
-  },
-  '2': {
-    title: 'Available Outlet',
-    items: data
-  }
-};
 const onDragEnd = (result, columns, setColumns) => {
   if (!result.destination) return;
   const { source, destination } = result;
@@ -167,12 +96,12 @@ const TaskCard = ({ item, index, columnId, column, handleSetColumn }) => {
     </Draggable>
   );
 };
-interface OutletElement {
-  OutletName: string;
-  id: string;
+
+interface PropsDragAndDrop {
+  columns: DataColumns;
+  setColumns: (data: DataColumns) => void;
 }
-const DnD = () => {
-  const [columns, setColumns] = useState(columnsFromBackend);
+const DnD = ({ columns, setColumns }: PropsDragAndDrop) => {
   const handleSetColumn = (
     columnsList: OutletElement[],
     reverseItem: OutletElement

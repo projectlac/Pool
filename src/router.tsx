@@ -38,13 +38,21 @@ const Survey = Loader(lazy(() => import('src/content/applications/Survey')));
 const AddContentPack = Loader(
   lazy(() => import('src/content/applications/ContentPack/Add/index'))
 );
+const EditContentPack = Loader(
+  lazy(() => import('src/content/applications/ContentPack/Add/index'))
+);
 
 const AddSurvey = Loader(
   lazy(() => import('src/content/applications/Survey/Add/index'))
 );
-
+const EditSurvey = Loader(
+  lazy(() => import('src/content/applications/Survey/Add/index'))
+);
 const User = Loader(lazy(() => import('src/content/applications/User')));
 const AddUser = Loader(
+  lazy(() => import('src/content/applications/User/Add/index'))
+);
+const EditUser = Loader(
   lazy(() => import('src/content/applications/User/Add/index'))
 );
 
@@ -54,12 +62,21 @@ const Individual = Loader(
 const AddIndividual = Loader(
   lazy(() => import('src/content/applications/Outlet/Individual/Add/index'))
 );
+const EditIndividual = Loader(
+  lazy(() => import('src/content/applications/Outlet/Individual/Add/index'))
+);
+
 const Groups = Loader(
   lazy(() => import('src/content/applications/Outlet/Groups'))
 );
 const AddGroups = Loader(
   lazy(() => import('src/content/applications/Outlet/Groups/Add/index'))
 );
+
+const EditGroups = Loader(
+  lazy(() => import('src/content/applications/Outlet/Groups/Add/index'))
+);
+
 // const UserProfile = Loader(
 //   lazy(() => import('src/content/applications/Users/profile'))
 // );
@@ -173,12 +190,20 @@ const routes = (isLogin) => [
         element: <AddGroups />
       },
       {
+        path: '/groups/edit/:id',
+        element: <EditGroups />
+      },
+      {
         path: '/individual',
         element: <Individual />
       },
       {
         path: '/individual/add',
         element: <AddIndividual />
+      },
+      {
+        path: '/individual/edit/:id',
+        element: <EditIndividual />
       }
     ]
   },
@@ -198,6 +223,10 @@ const routes = (isLogin) => [
       {
         path: '/add',
         element: <AddContentPack />
+      },
+      {
+        path: '/edit/:id',
+        element: <EditContentPack />
       }
     ]
   },
@@ -217,6 +246,10 @@ const routes = (isLogin) => [
       {
         path: '/add',
         element: <AddSurvey />
+      },
+      {
+        path: '/edit/:id',
+        element: <EditSurvey />
       }
     ]
   },
@@ -236,6 +269,10 @@ const routes = (isLogin) => [
       {
         path: '/add',
         element: <AddUser />
+      },
+      {
+        path: '/edit/:id',
+        element: <EditUser />
       }
     ]
   },

@@ -1,5 +1,5 @@
-import { useContext, useMemo, useRef, useState } from 'react';
-
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
 import {
   Box,
   Button,
@@ -8,14 +8,13 @@ import {
   Popover,
   Typography
 } from '@mui/material';
-
 import { styled } from '@mui/material/styles';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
-import { useNavigate } from 'react-router';
-import { AuthContext } from 'src/App';
 import jwt_decode from 'jwt-decode';
+import { useContext, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import userApi from 'src/api/userApi';
+import { AuthContext } from 'src/App';
+
 const UserBoxButton = styled(Button)(
   ({ theme }) => `
         padding-left: ${theme.spacing(1)};
@@ -42,12 +41,6 @@ const UserBoxLabel = styled(Typography)(
         font-weight: ${theme.typography.fontWeightBold};
         color: ${theme.palette.primary.main};
         display: block;
-`
-);
-
-const UserBoxDescription = styled(Typography)(
-  ({ theme }) => `
-        color: ${lighten(theme.palette.secondary.main, 0.5)}
 `
 );
 

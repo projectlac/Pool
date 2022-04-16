@@ -6,3 +6,14 @@ export interface Outlet {
   groupAssigned: string;
   lastUpdated: string;
 }
+export interface OutletElement {
+  OutletName: string;
+  id: string;
+}
+export interface DataColumns {
+  [key: string]: ItemOutlet;
+}
+export interface ItemOutlet {
+  title: string;
+  items: OutletElement[];
+}

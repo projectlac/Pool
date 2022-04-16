@@ -22,6 +22,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import { Survey, SurveyStatus } from 'src/models/survey';
 import BulkActions from 'src/components/Common/BulkAction/BulkActions';
+import { Link } from 'react-router-dom';
 interface RecentOrdersTableProps {
   className?: string;
   cryptoOrders: Survey[];
@@ -164,17 +165,22 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        gutterBottom
-                        noWrap
-                        sx={{ display: 'flex', alignItems: 'center' }}
+                      <Link
+                        to={`./edit/${cryptoOrder.id}`}
+                        style={{ textDecoration: 'none' }}
                       >
-                        {cryptoOrder.surveyName}{' '}
-                        <InfoOutlinedIcon sx={{ ml: 1 }} />
-                      </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          gutterBottom
+                          noWrap
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {cryptoOrder.surveyName}{' '}
+                        </Typography>
+                      </Link>
+                      v
                     </TableCell>
                     <TableCell>
                       <Typography

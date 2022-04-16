@@ -16,6 +16,7 @@ import {
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
+import { Link } from 'react-router-dom';
 import BulkActions from 'src/components/Common/BulkAction/BulkActions';
 import Pagination from 'src/components/Common/Pagination/Pagination';
 import { CryptoOrder, CryptoOrderStatus } from 'src/models/crypto_order';
@@ -237,15 +238,21 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        gutterBottom
-                        noWrap
+                      <Link
+                        to={`./edit/${cryptoOrder.id}`}
+                        style={{ textDecoration: 'none' }}
                       >
-                        {cryptoOrder.contentPackName}
-                      </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          gutterBottom
+                          noWrap
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {cryptoOrder.contentPackName}
+                        </Typography>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <Typography

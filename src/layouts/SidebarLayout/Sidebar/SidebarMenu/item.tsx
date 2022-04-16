@@ -1,12 +1,10 @@
-import { FC, ReactNode, useState, useContext } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import clsx from 'clsx';
-import { SidebarContext } from 'src/contexts/SidebarContext';
-
-import PropTypes from 'prop-types';
-import { Button, Badge, Collapse, ListItem } from '@mui/material';
-
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Badge, Button, Collapse, ListItem } from '@mui/material';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import { FC, ReactNode, useContext } from 'react';
+import { NavLink as RouterLink } from 'react-router-dom';
+import { SidebarContext } from 'src/contexts/SidebarContext';
 
 interface SidebarMenuItemProps {
   children?: ReactNode;

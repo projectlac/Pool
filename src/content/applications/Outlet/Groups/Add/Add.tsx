@@ -1,25 +1,104 @@
 import { Box, FormControl, Grid } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import DnD from 'src/components/Common/Dnd/DnD';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
+import { DataColumns, OutletElement } from 'src/models';
+
+export const data: OutletElement[] = [
+  {
+    id: '1',
+    OutletName: 'Create PR for the Task'
+  },
+  {
+    id: '2',
+    OutletName: 'Fix Styling'
+  },
+  {
+    id: '3',
+    OutletName: 'Handle Api Changes'
+  },
+  {
+    id: '4',
+    OutletName: 'Blog on new features'
+  },
+  {
+    id: '5',
+    OutletName: 'Call with Backend Team'
+  },
+  {
+    id: '6',
+    OutletName: 'Create PR for the Task'
+  },
+  {
+    id: '7',
+    OutletName: 'Fix Styling'
+  },
+  {
+    id: '8',
+    OutletName: 'Handle Api Changes'
+  },
+  {
+    id: '9',
+    OutletName: 'Blog on new features'
+  },
+  {
+    id: '10',
+    OutletName: 'Call with Backend Team'
+  },
+  {
+    id: '11',
+    OutletName: 'Create PR for the Task'
+  },
+  {
+    id: '12',
+    OutletName: 'Fix Styling'
+  },
+  {
+    id: '13',
+    OutletName: 'Handle Api Changes'
+  },
+  {
+    id: '14',
+    OutletName: 'Blog on new features'
+  },
+  {
+    id: '15',
+    OutletName: 'Call with Backend Team'
+  }
+];
+
+export const columnsFromBackend: DataColumns = {
+  '1': {
+    title: 'Tagged Outlet',
+    items: [] as OutletElement[]
+  },
+  '2': {
+    title: 'Available Outlet',
+    items: data
+  }
+};
 
 function Add() {
+  const [columns, setColumns] = useState(columnsFromBackend);
+
   const {
     register,
     handleSubmit,
-
     formState: { errors }
   } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange'
   });
 
+  const handleAfterDrag = (data: any) => {
+    setColumns(data);
+  };
   const onSubmit = (data) => {
-    console.log(data);
+    console.log(columns);
   };
 
   const submitFromNav = () => {
@@ -59,16 +138,7 @@ function Add() {
             </Grid>
           </Box>
 
-          {/* <Grid container spacing={5}>
-            <Grid item md={6}>
-              Tagged Outlet
-            </Grid>
-
-            <Grid item md={5}>
-              Available Outlet
-            </Grid>
-          </Grid> */}
-          <DnD />
+          <DnD columns={columns} setColumns={handleAfterDrag} />
           <SubmitNav onSubmit={submitFromNav} />
         </Box>
       </Grid>

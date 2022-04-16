@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
+import { Link } from 'react-router-dom';
 import BulkActions from 'src/components/Common/BulkAction/BulkActions';
 import Pagination from 'src/components/Common/Pagination/Pagination';
 import { User } from 'src/models/user';
@@ -141,16 +142,21 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        gutterBottom
-                        noWrap
-                        sx={{ display: 'flex', alignItems: 'center' }}
+                      <Link
+                        to={`./edit/${cryptoOrder.id}`}
+                        style={{ textDecoration: 'none' }}
                       >
-                        {cryptoOrder.userName}
-                      </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          gutterBottom
+                          noWrap
+                          sx={{ display: 'flex', alignItems: 'center' }}
+                        >
+                          {cryptoOrder.userName}{' '}
+                        </Typography>
+                      </Link>
                     </TableCell>
                     <TableCell>
                       <Typography
