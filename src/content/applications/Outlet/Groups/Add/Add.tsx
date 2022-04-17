@@ -6,7 +6,7 @@ import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import DnD from 'src/components/Common/Dnd/DnD';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
-import { DataColumns, OutletElement } from 'src/models';
+import { DataColumns, OutletElement, PropsEdit } from 'src/models';
 
 export const data: OutletElement[] = [
   {
@@ -82,7 +82,7 @@ export const columnsFromBackend: DataColumns = {
   }
 };
 
-function Add() {
+function Add({ editId, editMode }: PropsEdit) {
   const [columns, setColumns] = useState(columnsFromBackend);
 
   const {
@@ -94,7 +94,7 @@ function Add() {
     reValidateMode: 'onChange'
   });
 
-  const handleAfterDrag = (data: any) => {
+  const handleAfterDrag = (data: DataColumns) => {
     setColumns(data);
   };
   const onSubmit = (data) => {
@@ -139,7 +139,7 @@ function Add() {
           </Box>
 
           <DnD columns={columns} setColumns={handleAfterDrag} />
-          <SubmitNav onSubmit={submitFromNav} />
+          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
         </Box>
       </Grid>
     </Grid>

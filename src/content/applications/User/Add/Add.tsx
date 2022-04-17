@@ -1,18 +1,17 @@
 import { Box, FormControl, Grid, Typography } from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import React, { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
-import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
-function Add() {
+import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
+import { PropsEdit } from 'src/models';
+function Add({ editId, editMode }: PropsEdit) {
   const {
     register,
     handleSubmit,
-    trigger,
-    setValue,
     watch,
     formState: { errors }
   } = useForm({
@@ -188,7 +187,7 @@ function Add() {
               </FormControl>
             </Box>
           </Grid>
-          <SubmitNav onSubmit={submitFromNav} />
+          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
         </Box>
       </Grid>
     </Grid>

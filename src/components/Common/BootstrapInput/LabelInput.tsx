@@ -1,5 +1,5 @@
 import InputLabel from '@mui/material/InputLabel';
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 const LabelInput = styled(InputLabel)(({ theme }) => ({
   fontSize: 22,
   fontWeight: 'bold',

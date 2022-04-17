@@ -9,8 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  useTheme
+  Typography
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
@@ -60,7 +59,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
     selectedCryptoOrders.length < cryptoOrders.length;
   const selectedAllCryptoOrders =
     selectedCryptoOrders.length === cryptoOrders.length;
-  const theme = useTheme();
 
   return (
     <>

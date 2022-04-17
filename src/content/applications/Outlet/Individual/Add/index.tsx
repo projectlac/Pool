@@ -44,7 +44,7 @@ function AddNewIndividual() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <Add />
+            <Add editMode={edit} editId={id} />
           </Grid>
         </Grid>
       </Container>

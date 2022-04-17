@@ -1,13 +1,6 @@
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LockOpenTwoToneIcon from '@mui/icons-material/LockOpenTwoTone';
-import {
-  Box,
-  Button,
-  Hidden,
-  lighten,
-  Popover,
-  Typography
-} from '@mui/material';
+import { Box, Button, Hidden, Popover, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import jwt_decode from 'jwt-decode';
 import { useContext, useMemo, useRef, useState } from 'react';

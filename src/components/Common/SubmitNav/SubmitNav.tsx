@@ -15,11 +15,13 @@ const BoxNav = styled(Box)({
 });
 interface PropsSubmit {
   onSubmit: () => void;
+  editMode: boolean;
 }
-function SubmitNav({ onSubmit }: PropsSubmit) {
+function SubmitNav({ onSubmit, editMode }: PropsSubmit) {
   return (
     <BoxNav>
-      <Button color="error">Delete</Button>
+      <Box>{editMode && <Button color="error">Delete</Button>}</Box>
+
       <Box>
         <Button>Save as draft</Button>
         <Button variant="contained" type="submit" onClick={onSubmit}>

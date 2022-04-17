@@ -1,3 +1,5 @@
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import {
   Box,
   Card,
@@ -9,20 +11,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  useTheme
+  Typography
 } from '@mui/material';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
-import Pagination from 'src/components/Common/Pagination/Pagination';
-
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
-import { Survey, SurveyStatus } from 'src/models/survey';
-import BulkActions from 'src/components/Common/BulkAction/BulkActions';
 import { Link } from 'react-router-dom';
+import BulkActions from 'src/components/Common/BulkAction/BulkActions';
+import Pagination from 'src/components/Common/Pagination/Pagination';
+import { Survey, SurveyStatus } from 'src/models/survey';
+
 interface RecentOrdersTableProps {
   className?: string;
   cryptoOrders: Survey[];
@@ -81,7 +79,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
     selectedCryptoOrders.length < cryptoOrders.length;
   const selectedAllCryptoOrders =
     selectedCryptoOrders.length === cryptoOrders.length;
-  const theme = useTheme();
 
   return (
     <>
@@ -180,7 +177,6 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                           {cryptoOrder.surveyName}{' '}
                         </Typography>
                       </Link>
-                      v
                     </TableCell>
                     <TableCell>
                       <Typography

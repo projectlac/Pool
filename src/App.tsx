@@ -7,7 +7,7 @@ import { Box, CssBaseline } from '@mui/material';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import './assets/styles/global.scss';
-import station from './api/station';
+
 import { useNavigate } from 'react-router-dom';
 export const AuthContext = React.createContext(null);
 const App = () => {
@@ -15,25 +15,7 @@ const App = () => {
     Boolean(localStorage.getItem('access_token'))
   );
   const nav = useNavigate();
-  useEffect(() => {
-    const callAuth = async () => {
-      const checkToken = Boolean(localStorage.getItem('access_token'));
 
-      if (checkToken) {
-        await station
-          .getSation()
-          .then(() => {
-            setIsLogin(true);
-          })
-          .catch(() => {
-            setIsLogin(false);
-            localStorage.removeItem('access_token');
-            nav(`${process.env.REACT_APP_BASE_NAME}/login`);
-          });
-      }
-    };
-    callAuth();
-  }, []);
   const [updated, setUpdated] = useState<boolean>(false);
   const updateSuccess = () => {
     setUpdated(true);

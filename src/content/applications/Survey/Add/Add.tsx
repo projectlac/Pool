@@ -17,10 +17,9 @@ import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import TinyEditor from 'src/components/TinyEditor/TinyEditor';
-import { ContentQuestion } from 'src/models';
-import { fileObject } from 'src/models/fileObject';
+import { ContentQuestion, PropsEdit } from 'src/models';
 
-function Add() {
+function Add({ editId, editMode }: PropsEdit) {
   const [numberOfQuestions, setNumberOfQuestions] = useState<string>('1');
   const [surveyDurationFrom, setSurveyDurationFrom] =
     React.useState<Date | null>(new Date('2014-08-18T21:11:54'));
@@ -54,7 +53,6 @@ function Add() {
     mode: 'onChange',
     reValidateMode: 'onChange'
   });
-  const [fileList, setFileList] = useState<fileObject[]>([]);
 
   const onSubmit = (data) => {
     console.log('contentQuestion', contentQuestion);
@@ -65,9 +63,6 @@ function Add() {
 
   const submitFromNav = () => {
     handleSubmit(onSubmit);
-  };
-  const handleUploadFile = (file: fileObject[]) => {
-    setFileList(file);
   };
 
   const handleGetDataFromEditor = (data: string, title: string) => {
@@ -393,7 +388,7 @@ function Add() {
               </Box>
             </Grid>
           </Box>
-          <SubmitNav onSubmit={submitFromNav} />
+          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
         </Box>
       </Grid>
     </Grid>

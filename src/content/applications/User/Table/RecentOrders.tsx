@@ -1,6 +1,5 @@
-import RecentOrdersTable from './RecentOrdersTable';
-import { subDays } from 'date-fns';
 import { User } from 'src/models/user';
+import RecentOrdersTable from './RecentOrdersTable';
 
 function RecentOrders() {
   const cryptoOrders: User[] = [

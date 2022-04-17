@@ -69,13 +69,6 @@ function RecentOrders() {
     }
   ];
 
-  const column = [
-    'Content Pack Name',
-    '# of Content(s)',
-    'Last Update',
-    'Status'
-  ];
-
   return <RecentOrdersTable cryptoOrders={cryptoOrders} />;
 }
 

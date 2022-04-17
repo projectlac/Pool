@@ -1,4 +1,3 @@
-import { DesktopDatePicker } from '@mui/lab';
 import {
   Box,
   FormControl,
@@ -6,21 +5,17 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  TextField,
   Typography
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import CustomizedAccordions from 'src/components/Common/Accordions/CustomizedAccordions';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
-import TinyEditor from 'src/components/TinyEditor/TinyEditor';
-import { ContentQuestion } from 'src/models';
-import { fileObject } from 'src/models/fileObject';
+import { PropsEdit } from 'src/models';
 
-function Add() {
+function Add({ editId, editMode }: PropsEdit) {
   const {
     register,
     handleSubmit,
@@ -164,7 +159,7 @@ function Add() {
             </Grid>
           </Box>
 
-          <SubmitNav onSubmit={submitFromNav} />
+          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
         </Box>
       </Grid>
     </Grid>

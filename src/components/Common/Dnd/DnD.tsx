@@ -1,8 +1,7 @@
-import { Box, Container, Grid, Typography } from '@mui/material';
-import React, { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { string } from 'prop-types';
+import { Box, Grid, Typography } from '@mui/material';
+import React from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { DataColumns, OutletElement } from 'src/models';
 
 const onDragEnd = (result, columns, setColumns) => {

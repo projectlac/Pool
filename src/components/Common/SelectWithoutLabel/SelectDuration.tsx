@@ -21,7 +21,7 @@ export default function SelectDuration({
 
   React.useEffect(() => {
     setAge(defaultValue);
-  }, []);
+  }, [defaultValue]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);

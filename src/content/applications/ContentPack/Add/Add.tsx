@@ -7,22 +7,23 @@ import {
   SelectChangeEvent,
   Typography
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import CustomizedTables from 'src/components/Common/Table/CustomizedTables';
+import { PropsEdit } from 'src/models';
 import { fileObject } from 'src/models/fileObject';
 
-function Add() {
+function Add({ editId, editMode }: PropsEdit) {
   const [numberOfContent, setNumberOfContent] = useState<string>('1');
 
   const handleChange = (event: SelectChangeEvent) => {
     setNumberOfContent(event.target.value);
   };
 
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit } = useForm();
   const [fileList, setFileList] = useState<fileObject[]>([]);
   const onSubmit = (data) => {
     const { contentName } = data;
@@ -127,7 +128,7 @@ function Add() {
               </Box>
             </Box>
           </Grid>
-          <SubmitNav onSubmit={submitFromNav} />
+          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
         </Box>
       </Grid>
     </Grid>

@@ -1,4 +1,4 @@
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Typography } from '@mui/material';
 const ErrorTitle = styled(Typography)(({ theme }) => ({
   fontSize: 21,
