@@ -388,7 +388,11 @@ function Add({ editId, editMode }: PropsEdit) {
               </Box>
             </Grid>
           </Box>
-          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
+          <SubmitNav
+            onSubmit={submitFromNav}
+            editMode={editMode}
+            isShowDraftBtn={true}
+          />
         </Box>
       </Grid>
     </Grid>

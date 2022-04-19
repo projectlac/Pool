@@ -7,8 +7,9 @@ import {
   SelectChangeEvent,
   Typography
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import userApi from 'src/api/userApi';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
@@ -37,6 +38,11 @@ function Add({ editId, editMode }: PropsEdit) {
   const handleUploadFile = (file: fileObject[]) => {
     setFileList(file);
   };
+
+  useEffect(() => {
+    if (editId) {
+    }
+  }, [editId]);
   return (
     <Grid container>
       <Grid item md={12}>
@@ -117,7 +123,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     marginLeft: '10px'
                   }}
                 >
-                  (Please upload in .JPG/ .PNG)
+                  (Please upload in .JPG/ .PNG, max 5MB)
                 </span>
               </LabelInput>
               <Box>
@@ -128,7 +134,11 @@ function Add({ editId, editMode }: PropsEdit) {
               </Box>
             </Box>
           </Grid>
-          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
+          <SubmitNav
+            onSubmit={submitFromNav}
+            editMode={editMode}
+            isShowDraftBtn={true}
+          />
         </Box>
       </Grid>
     </Grid>

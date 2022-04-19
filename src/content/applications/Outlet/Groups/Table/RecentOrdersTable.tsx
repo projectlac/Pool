@@ -93,7 +93,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                     onChange={handleSelectAllCryptoOrders}
                   />
                 </TableCell>
-                <TableCell>Outlet Name</TableCell>
+                <TableCell>Group Name</TableCell>
                 <TableCell>Contact Pack Assigned</TableCell>
                 <TableCell>Survey Name Assigned</TableCell>
                 <TableCell># of Content</TableCell>

@@ -29,7 +29,7 @@ function AddNewUser() {
             sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}
           >
             <LeftArrow style={{ transform: 'scale(2)', marginRight: '10px' }} />
-            <span>back to User Listening</span>
+            <span>back to User Listing</span>
           </Typography>
         </Link>
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>

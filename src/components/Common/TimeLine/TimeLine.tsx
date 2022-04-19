@@ -6,13 +6,18 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { Box, Typography } from '@mui/material';
+import { Audit } from 'src/models/audit';
 
-export default function TimeLine() {
+interface PropsTimeLine {
+  auditData: Audit[];
+  day: string;
+}
+export default function TimeLine({ auditData, day }: PropsTimeLine) {
   return (
     <Timeline>
-      <Typography variant="h3">Today</Typography>
+      <Typography variant="h3">{day}</Typography>
       <Box sx={{ px: 3, mt: 2 }}>
-        {[...Array(8)].map((d, index) => (
+        {auditData.map((d, index) => (
           <TimelineItem
             key={index}
             sx={{ '&:last-child .MuiTimelineConnector-root': { top: '0' } }}
@@ -31,7 +36,7 @@ export default function TimeLine() {
                   fontSize: '16px'
                 }}
               >
-                Eden Created
+                {d.action}
               </Typography>
               <Typography
                 sx={{
@@ -41,7 +46,9 @@ export default function TimeLine() {
                   borderBottom: '1px solid #ddd'
                 }}
               >
-                10-03-2020
+                {`${d.createdDate.split('T')[0]} / ${
+                  d.createdDate.split('T')[1]
+                }`}
               </Typography>
             </TimelineContent>
           </TimelineItem>

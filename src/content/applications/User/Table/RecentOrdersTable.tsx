@@ -11,6 +11,7 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import { getTime } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -36,6 +37,11 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
         ? cryptoOrders.map((cryptoOrder) => cryptoOrder.id)
         : []
     );
+  };
+
+  const getTime = (time: string) => {
+    let timer = `${time.split('T')[0]} / ${time.split('T')[1]}`;
+    return timer;
   };
 
   const handleSelectOneCryptoOrder = (
@@ -175,7 +181,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                         gutterBottom
                         noWrap
                       >
-                        {cryptoOrder.createOn}
+                        {getTime(cryptoOrder.createdDate)}
                       </Typography>
                     </TableCell>
                   </TableRow>

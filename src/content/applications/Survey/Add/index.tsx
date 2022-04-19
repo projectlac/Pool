@@ -29,7 +29,7 @@ function AddNewServey() {
             sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}
           >
             <LeftArrow style={{ transform: 'scale(2)', marginRight: '10px' }} />
-            <span>back to Survey Listening</span>
+            <span>back to Survey Listing</span>
           </Typography>
         </Link>
         <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>

@@ -5,7 +5,11 @@ import * as React from 'react';
 
 export default function Toast(props) {
   const { open, message, onClose } = props;
-
+  React.useEffect(() => {
+    setTimeout(() => {
+      onClose();
+    }, 3000);
+  }, [open]);
   const action = (
     <React.Fragment>
       <IconButton

@@ -1,8 +1,10 @@
 import { Box, FormControl, Grid, Typography } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import userApi from 'src/api/userApi';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
@@ -13,14 +15,30 @@ function Add({ editId, editMode }: PropsEdit) {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors }
   } = useForm({
     mode: 'onChange',
     reValidateMode: 'onChange'
   });
+  const nav = useNavigate();
   const [role, setRole] = React.useState<string>('Admin');
   const onSubmit = (data) => {
-    console.log(data, role);
+    const { userName, password, email, confirmPassword } = data;
+    try {
+      const params = {
+        userName,
+        password,
+        email,
+        confirmPassword,
+        role
+      };
+      userApi.addUser(params).then((res) => {
+        if (res.data && res.data.success) {
+          nav(`${process.env.REACT_APP_BASE_NAME}/user`);
+        }
+      });
+    } catch (error) {}
   };
 
   const submitFromNav = () => {
@@ -30,6 +48,21 @@ function Add({ editId, editMode }: PropsEdit) {
   const handleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value);
   };
+
+  useEffect(() => {
+    if (editId) {
+      try {
+        userApi.getUserById(editId).then((res) => {
+          const result = res.data;
+          if (result && result.success) {
+            setRole(result.data.role);
+            setValue('userName', result.data.userName);
+            setValue('email', result.data.email);
+          }
+        });
+      } catch (error) {}
+    }
+  }, [editId]);
 
   const password = useRef({});
   password.current = watch('password', '');
@@ -56,7 +89,7 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                   error={errors.userName ? true : false}
                   defaultValue=""
-                  placeholder="Default input"
+                  placeholder="User Name"
                   id="bootstrap-input"
                   {...register('userName', {
                     required: '* This field is require'
@@ -83,7 +116,7 @@ function Add({ editId, editMode }: PropsEdit) {
                   error={errors.email ? true : false}
                   defaultValue=""
                   type="email"
-                  placeholder="Default input"
+                  placeholder="Email"
                   id="bootstrap-input"
                   {...register('email', {
                     required: '* This field is require',
@@ -96,60 +129,69 @@ function Add({ editId, editMode }: PropsEdit) {
                 />
               </FormControl>
             </Box>
-            <Box mt={2}>
-              <FormControl variant="standard" sx={{ width: '100%' }}>
-                <LabelInput shrink htmlFor="bootstrap-input">
-                  Password
-                  {errors.password && (
-                    <ErrorTitle>{errors.password.message}</ErrorTitle>
-                  )}
-                </LabelInput>
-                <BootstrapInput
-                  sx={{
-                    '& .MuiInputBase-input': {
-                      border: '1px solid #ddd',
-                      background: '#fff',
-                      height: '35px'
-                    }
-                  }}
-                  defaultValue=""
-                  error={errors.password ? true : false}
-                  placeholder="Default input"
-                  id="bootstrap-input"
-                  {...register('password', {
-                    required: '* This field is require'
-                  })}
-                />
-              </FormControl>
-            </Box>
-            <Box mt={2}>
-              <FormControl variant="standard" sx={{ width: '100%' }}>
-                <LabelInput shrink htmlFor="bootstrap-input">
-                  Re-confirm Password{' '}
-                  {errors.confirmPassword && (
-                    <ErrorTitle>{errors.confirmPassword.message}</ErrorTitle>
-                  )}
-                </LabelInput>
-                <BootstrapInput
-                  sx={{
-                    '& .MuiInputBase-input': {
-                      border: '1px solid #ddd',
-                      background: '#fff',
-                      height: '35px'
-                    }
-                  }}
-                  defaultValue=""
-                  placeholder="Default input"
-                  error={errors.confirmPassword ? true : false}
-                  id="bootstrap-input"
-                  {...register('confirmPassword', {
-                    required: '* This field is require',
-                    validate: (value) =>
-                      value === password.current || 'The passwords do not match'
-                  })}
-                />
-              </FormControl>
-            </Box>
+            {!editId && (
+              <Box mt={2}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <LabelInput shrink htmlFor="bootstrap-input">
+                    Password
+                    {errors.password && (
+                      <ErrorTitle>{errors.password.message}</ErrorTitle>
+                    )}
+                  </LabelInput>
+                  <BootstrapInput
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        border: '1px solid #ddd',
+                        background: '#fff',
+                        height: '35px'
+                      }
+                    }}
+                    defaultValue=""
+                    disabled={Boolean(editId)}
+                    error={errors.password ? true : false}
+                    placeholder="Password"
+                    type="password"
+                    id="bootstrap-input"
+                    {...register('password', {
+                      required: '* This field is require'
+                    })}
+                  />
+                </FormControl>
+              </Box>
+            )}
+            {!editId && (
+              <Box mt={2}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <LabelInput shrink htmlFor="bootstrap-input">
+                    Re-confirm Password{' '}
+                    {errors.confirmPassword && (
+                      <ErrorTitle>{errors.confirmPassword.message}</ErrorTitle>
+                    )}
+                  </LabelInput>
+                  <BootstrapInput
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        border: '1px solid #ddd',
+                        background: '#fff',
+                        height: '35px'
+                      }
+                    }}
+                    defaultValue=""
+                    disabled={Boolean(editId)}
+                    placeholder="Re-confirm password"
+                    type="password"
+                    error={errors.confirmPassword ? true : false}
+                    id="bootstrap-input"
+                    {...register('confirmPassword', {
+                      required: '* This field is require',
+                      validate: (value) =>
+                        value === password.current ||
+                        'The passwords do not match'
+                    })}
+                  />
+                </FormControl>
+              </Box>
+            )}
             <Box mt={2}>
               <FormControl sx={{ minWidth: 75 }}>
                 <Typography

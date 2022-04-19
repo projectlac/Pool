@@ -6,8 +6,9 @@ import {
   FormControl,
   Typography
 } from '@mui/material';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import loginApi from 'src/api/loginApi';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import Toast from 'src/components/Common/Toast/Toast';
@@ -16,30 +17,34 @@ import ChangePassword from './ChangePassword';
 function ForgotPassword() {
   // const { handleLoginIn } = useContext(AuthContext);
   const [checkFillEmail, setCheckFillEmail] = useState<Boolean>(false);
-  const { register, handleSubmit } = useForm();
+  const [fillEmail, setFillEmail] = useState<string>('');
+  const { register, handleSubmit, watch } = useForm();
   // const nav = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const [errMsg, setErrMsg] = useState<string>('Something wrong');
   const handleClose = () => {
     setOpen(false);
   };
-  const onSubmit = (data) => {
-    setCheckFillEmail(true);
+
+  const handleChangeMessage = (msg: string) => {
+    setErrMsg(msg);
+  };
+  const handleOpenMessage = () => {
     setOpen(true);
-    // const { username, password } = data;
-    // loginApi.login({ userName: username, password }).then((res) => {
-    //   if (res.data.success) {
-    //     localStorage.setItem('access_token', res.data.data.token);
-
-    //     handleLoginIn();
-    //     nav(`${process.env.REACT_APP_BASE_NAME}/dashboards/main`);
-    //   } else {
-    //     setErrMsg(res.data.data);
-    //     setOpen(true);
-    //   }
-    // });
-
-    //
+  };
+  const onSubmit = (data) => {
+    const { email } = data;
+    try {
+      loginApi.forgotPassword(email).then((res) => {
+        if (res.data.success) {
+          setCheckFillEmail(true);
+          setFillEmail(email);
+        } else {
+          handleChangeMessage(res.data.message);
+          setOpen(true);
+        }
+      });
+    } catch (error) {}
   };
 
   return (
@@ -54,7 +59,7 @@ function ForgotPassword() {
       <Container maxWidth="lg" sx={{ height: '100vh', pt: 15 }}>
         <Card sx={{ p: { md: 10, xs: 3 } }}>
           <Typography variant="h1" component="h1" align="center" sx={{ mb: 2 }}>
-            Forgot Password
+            {checkFillEmail ? 'Change Password' : 'Forgot Password'}
           </Typography>
           <Typography variant="h3" component="h3" align="center">
             Content Management System
@@ -94,7 +99,7 @@ function ForgotPassword() {
                     defaultValue=""
                     id="bootstrap-input"
                     placeholder="eg: Jaison"
-                    {...register('email')}
+                    {...register('email', { required: 'Email is require' })}
                   />
                 </FormControl>
 
@@ -109,7 +114,11 @@ function ForgotPassword() {
               </Box>
             </Box>
           ) : (
-            <ChangePassword />
+            <ChangePassword
+              handleChangeMessage={handleChangeMessage}
+              handleOpenMessage={handleOpenMessage}
+              email={fillEmail}
+            />
           )}
         </Card>
         <Toast open={open} onClose={handleClose} message={errMsg} />

@@ -59,7 +59,20 @@ export default function UploadTableSurvey({
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell width={'50%'}>File Name</StyledTableCell>
+            <StyledTableCell width={'50%'}>
+              File Name{' '}
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: '#999',
+                  textTransform: 'initial',
+                  fontWeight: 'normal',
+                  marginLeft: '10px'
+                }}
+              >
+                (Please upload in .JPG/ .PNG, max 5MB)
+              </span>
+            </StyledTableCell>
             <StyledTableCell align="center">Action</StyledTableCell>
           </TableRow>
         </TableHead>
