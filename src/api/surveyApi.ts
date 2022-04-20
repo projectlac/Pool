@@ -4,7 +4,7 @@ import axiosFormDataClient from './axiosFormDataClient';
 import axiosJsonClient from './axiosJsonClient';
 const surveyApi = {
   add(params: FormData): Promise<PromiseApi> {
-    return axiosFormDataClient.post('Surveys/list-survey', params);
+    return axiosFormDataClient.post('Surveys/create-survey', params);
   },
 
   getList(): Promise<PromiseApi> {

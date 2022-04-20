@@ -10,8 +10,11 @@ import {
   Typography
 } from '@mui/material';
 import { format } from 'date-fns';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import surveyApi from 'src/api/surveyApi';
+import { AuthContext } from 'src/App';
 import CustomizedAccordions from 'src/components/Common/Accordions/CustomizedAccordions';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
@@ -21,6 +24,8 @@ import TinyEditor from 'src/components/TinyEditor/TinyEditor';
 import { ContentQuestion, PropsEdit } from 'src/models';
 
 function Add({ editId, editMode }: PropsEdit) {
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
+
   const [numberOfQuestions, setNumberOfQuestions] = useState<string>('1');
 
   const [idContentPack, setIdContentPack] = useState<string>(undefined);
@@ -35,6 +40,7 @@ function Add({ editId, editMode }: PropsEdit) {
     ContentQuestion[]
   >([]);
 
+  const nav = useNavigate();
   const handleSetContentQuestion = (content: ContentQuestion[]) => {
     setContentQuestion(content);
   };
@@ -87,24 +93,42 @@ function Add({ editId, editMode }: PropsEdit) {
 
     formData.append('BodyExpired', bodyExpired);
 
-    formData.append('StartSurveyDate', format(surveyDurationFrom, 'dd-MM-yyy'));
+    formData.append('StartSurveyDate', format(surveyDurationFrom, 'MM-dd-yyy'));
 
-    formData.append('EndSurveyDate', format(surveyDurationTo, 'dd-MM-yyy'));
+    formData.append('EndSurveyDate', format(surveyDurationTo, 'MM-dd-yyy'));
 
     // formData.append('ContentSurveyRequest.NumberOfQuestion', numberOfQuestions);
 
-    contentQuestion.map((d, i) => {
+    contentQuestion.forEach((d, i) => {
       formData.append(`Questions[${i}].name`, `Question ${i}`);
+      formData.append(`Questions[${i}].description`, `Question ${i}`);
+
       formData.append(`Questions[${i}].questionType`, d.questionType);
       formData.append(`Questions[${i}].typeOfQuestion`, d.typeOfQuestion);
       formData.append(`Questions[${i}].questionCaption`, d.caption);
       formData.append(`Questions[${i}].numberOfAnswer`, d.numberOfAnswer);
-
+      d.listAnswer.forEach((ans, index) => {
+        if (ans !== '') {
+          formData.append(`Questions[${i}].answers[${index}].answerStr`, ans);
+        }
+      });
       if (d.file !== undefined) {
         formData.append(`Questions[${i}].image`, d.file);
       }
     });
     if (idContentPack === undefined) {
+      try {
+        surveyApi.add(formData).then((res) => {
+          handleChangeMessageToast(res.data.message);
+          handleOpenToast();
+          if (res.data.success) {
+            nav(`${process.env.REACT_APP_BASE_NAME}/survey`);
+          }
+        });
+      } catch (error) {
+        handleChangeMessageToast('Some thing went wrong!');
+        handleOpenToast();
+      }
     }
     // console.log('contentQuestion', contentQuestion);
     // console.log(data);
