@@ -7,8 +7,11 @@ import {
   SelectChangeEvent,
   Typography
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import contentPackApi from 'src/api/contentPackApi';
+import { AuthContext } from 'src/App';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
@@ -17,21 +20,71 @@ import { PropsEdit } from 'src/models';
 import { fileObject } from 'src/models/fileObject';
 
 function Add({ editId, editMode }: PropsEdit) {
-  const [numberOfContent, setNumberOfContent] = useState<string>('1');
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
 
+  const [numberOfContent, setNumberOfContent] = useState<string>('1');
+  const [idContentPack, setIdContentPack] = useState<string>(undefined);
+
+  const [status, setStatus] = useState<string>('1');
   const handleChange = (event: SelectChangeEvent) => {
     setNumberOfContent(event.target.value);
   };
-
-  const { register, handleSubmit } = useForm();
-  const [fileList, setFileList] = useState<fileObject[]>([]);
+  const nav = useNavigate();
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
+  const [fileList, setFileList] = useState<fileObject[]>([
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' }
+  ]);
   const onSubmit = (data) => {
-    const { contentName } = data;
-    //
-    console.log(fileList, contentName);
+    const { contentName, idContentPack } = data;
+
+    // console.log(fileList, contentName, numberOfContent, status);
+    const formData = new FormData();
+
+    formData.append('Name', contentName);
+    formData.append('NumberOfContent', numberOfContent);
+    formData.append('ContentPackStatus', status);
+    fileList.forEach((d, index) => {
+      formData.append(`ContentUploads[${index}].FileUpload`, d.file);
+      formData.append(`ContentUploads[${index}].Duration`, d.duration);
+      formData.append(`ContentUploads[${index}].Seq`, d.seq);
+    });
+
+    try {
+      if (idContentPack === undefined) {
+        contentPackApi.add(formData).then((res) => {
+          handleOpenToast();
+          handleChangeMessageToast(res.data.message);
+          if (res.data.success) {
+            nav(`${process.env.REACT_APP_BASE_NAME}/content-pack`);
+          }
+        });
+      } else {
+        formData.append('Id', idContentPack);
+        contentPackApi.update(formData).then((res) => {
+          handleOpenToast();
+          handleChangeMessageToast(res.data.message);
+          if (res.data.success) {
+            nav(`${process.env.REACT_APP_BASE_NAME}/content-pack`);
+          }
+        });
+      }
+    } catch (error) {}
   };
 
-  const submitFromNav = () => {
+  const submitAsDraft = async () => {
+    setStatus('1');
+    handleSubmit(onSubmit);
+  };
+
+  const submitFromNav = async () => {
+    setStatus('2');
     handleSubmit(onSubmit);
   };
   const handleUploadFile = (file: fileObject[]) => {
@@ -40,6 +93,21 @@ function Add({ editId, editMode }: PropsEdit) {
 
   useEffect(() => {
     if (editId) {
+      contentPackApi.getDataById(editId).then((res) => {
+        if (res.data.success) {
+          let data = res.data.data;
+          setIdContentPack(data.id);
+          setNumberOfContent(data.numberOfContent);
+          setValue('contentName', data.name);
+          let tempData = [...data.contentUploads].map((data) => ({
+            ...data,
+            file: undefined
+          }));
+          console.log(tempData);
+
+          setFileList(tempData);
+        }
+      });
     }
   }, [editId]);
   return (
@@ -60,9 +128,10 @@ function Add({ editId, editMode }: PropsEdit) {
                   }
                 }}
                 defaultValue=""
+                error={Boolean(errors.contentName)}
                 placeholder="Default input"
                 id="bootstrap-input"
-                {...register('contentName')}
+                {...register('contentName', { required: true })}
               />
             </FormControl>
             <Box sx={{ mt: 3 }}>
@@ -129,14 +198,18 @@ function Add({ editId, editMode }: PropsEdit) {
                 <CustomizedTables
                   numberOfContent={numberOfContent}
                   handleUploadFile={handleUploadFile}
+                  fileList={fileList}
                 />
               </Box>
             </Box>
           </Grid>
           <SubmitNav
+            idContentPack={idContentPack}
+            page={'content-pack'}
             onSubmit={submitFromNav}
             editMode={editMode}
             isShowDraftBtn={true}
+            onDraft={submitAsDraft}
           />
         </Box>
       </Grid>

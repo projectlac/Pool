@@ -36,11 +36,23 @@ const List = styled('ul')({
   }
 });
 
-export default function UsePagination() {
-  const { items } = usePagination({
-    count: 10
-  });
+export default function UsePagination(props) {
+  const { total, handleSetIndex, page, indexPage } = props;
 
+  const handlePage = () => {
+    let temp = total % page;
+    if (temp === 0) {
+      return total / page;
+    } else {
+      return Math.floor(total / page) + 1;
+    }
+  };
+  const { items } = usePagination({
+    count: handlePage()
+  });
+  const chosePage = (page: number) => {
+    handleSetIndex(page - 1);
+  };
   return (
     <nav>
       <List>
@@ -52,8 +64,8 @@ export default function UsePagination() {
               <button
                 type="button"
                 style={{
-                  background: selected ? '#c9c9c9' : ' #fff',
-                  color: selected ? '#fff' : '#3e8ac1'
+                  background: page - 1 === indexPage ? '#c9c9c9' : ' #fff',
+                  color: page - 1 === indexPage ? '#fff' : '#3e8ac1'
                 }}
               >
                 ...
@@ -64,8 +76,8 @@ export default function UsePagination() {
               <button
                 type="button"
                 style={{
-                  background: selected ? '#c9c9c9' : ' #fff',
-                  color: selected ? '#fff' : '#3e8ac1'
+                  background: page - 1 === indexPage ? '#c9c9c9' : ' #fff',
+                  color: page - 1 === indexPage ? '#fff' : '#3e8ac1'
                 }}
                 {...item}
               >
@@ -80,7 +92,16 @@ export default function UsePagination() {
             );
           }
 
-          return <li key={index}>{children}</li>;
+          return (
+            <li
+              key={index}
+              onClick={() => {
+                chosePage(page);
+              }}
+            >
+              {children}
+            </li>
+          );
         })}
       </List>
     </nav>

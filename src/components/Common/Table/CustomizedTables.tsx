@@ -12,6 +12,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box } from '@mui/material';
 import SelectDuration from '../SelectWithoutLabel/SelectDuration';
 import { fileObject } from 'src/models/fileObject';
+import { AuthContext } from 'src/App';
+import { useContext } from 'react';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#ebebeb',
@@ -38,23 +40,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 interface PropsTableUpload {
   numberOfContent: string;
+  fileList: fileObject[];
   handleUploadFile: (file: fileObject[]) => void;
 }
 
 export default function CustomizedTables({
   numberOfContent,
+  fileList,
   handleUploadFile
 }: PropsTableUpload) {
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
+
   const [defautFileList, setDefautFileList] = React.useState<fileObject[]>([
-    { file: undefined, duration: '10s', seq: '5s' },
-    { file: undefined, duration: '10s', seq: '5s' },
-    { file: undefined, duration: '10s', seq: '5s' }
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
+    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' }
   ]);
+
+  React.useEffect(() => {
+    setDefautFileList(fileList);
+  }, [fileList]);
+
   const handleUpload = (e, index) => {
+    const file = (e.target as HTMLInputElement).files[0];
     let tempData = [...defautFileList];
-    tempData[index].file = (e.target as HTMLInputElement).files[0];
-    setDefautFileList(tempData);
-    handleUploadFile(tempData);
+    if (file.size <= 5 * 1204 * 1024) {
+      if (
+        file.type.toLocaleLowerCase().includes('jpg') ||
+        file.type.toLocaleLowerCase().includes('png') ||
+        file.type.toLocaleLowerCase().includes('jpeg')
+      ) {
+        tempData[index].file = file;
+        setDefautFileList(tempData);
+        handleUploadFile(tempData);
+      } else {
+        handleChangeMessageToast('Incorrect format');
+        handleOpenToast();
+      }
+    } else {
+      handleChangeMessageToast('This file too large');
+      handleOpenToast();
+    }
   };
 
   const handleTime = (index: number, title: string, quality: string) => {
@@ -65,6 +91,12 @@ export default function CustomizedTables({
     handleUploadFile(tempData);
   };
 
+  const deleteFile = (index: number) => {
+    let tempData = [...defautFileList];
+    tempData[index].file = undefined;
+    setDefautFileList(tempData);
+    handleUploadFile(tempData);
+  };
   return (
     <TableContainer
       component={Paper}
@@ -94,16 +126,22 @@ export default function CustomizedTables({
                       lineHeight: 2
                     }}
                   >
-                    <input
-                      type="file"
-                      hidden
-                      accept=".jpg, .png"
-                      onChange={(e) => {
-                        handleUpload(e, index);
-                      }}
-                    />
-                    <DriveFileMoveIcon sx={{ marginRight: '10px' }} /> Upload
-                    New File
+                    {fileList[index]?.fileName ? (
+                      fileList[index]?.fileName
+                    ) : (
+                      <>
+                        <input
+                          type="file"
+                          hidden
+                          accept=".jpg, .png"
+                          onChange={(e) => {
+                            handleUpload(e, index);
+                          }}
+                        />
+                        <DriveFileMoveIcon sx={{ marginRight: '10px' }} />{' '}
+                        Upload New File
+                      </>
+                    )}
                   </Box>
                 )}
               </StyledTableCell>
@@ -121,13 +159,18 @@ export default function CustomizedTables({
                     />
                   </Box>
 
-                  <CloseIcon color="error" />
+                  <CloseIcon
+                    color="error"
+                    onClick={() => {
+                      deleteFile(index);
+                    }}
+                  />
                 </Box>
               </StyledTableCell>
               <StyledTableCell align="center">
                 <SelectDuration
-                  value={['10s', '20s', '30s']}
-                  defaultValue={'10s'}
+                  value={['10', '20', '30']}
+                  defaultValue={defautFileList[index].duration}
                   index={index}
                   title={'duration'}
                   handleTime={handleTime}
@@ -135,8 +178,8 @@ export default function CustomizedTables({
               </StyledTableCell>
               <StyledTableCell align="center">
                 <SelectDuration
-                  value={['5s', '20s', '30s']}
-                  defaultValue={'5s'}
+                  value={['5', '20', '30']}
+                  defaultValue={defautFileList[index].seq}
                   index={index}
                   handleTime={handleTime}
                   title={'seq'}

@@ -1,9 +1,12 @@
-export type CryptoOrderStatus = 'publish' | 'draft';
+export type CryptoOrderStatus = 'Ongoing' | 'Draft';
 
 export interface CryptoOrder {
   id: string;
-  status: CryptoOrderStatus;
-  contentPackName: string;
-  lastUpdate: number;
+  name: string;
+  contentPackStatus: CryptoOrderStatus;
+  description?: string;
   numberOfContent: number;
+  contentUploads: number;
+  createdDate: string;
+  updatedDate: string;
 }

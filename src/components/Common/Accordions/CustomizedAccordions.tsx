@@ -57,6 +57,7 @@ interface PropsAccordions {
 }
 export default function CustomizedAccordions({
   numberOfQuestions,
+
   handleSetContentQuestion
 }: PropsAccordions) {
   const handleGetDataFromEditor = (data: string, index: number) => {
@@ -74,6 +75,13 @@ export default function CustomizedAccordions({
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+
+  const handleSetNumberOfAnswer = (value: string, index: number) => {
+    let tempContetQuestion = [...contentQuestion];
+    tempContetQuestion[index].numberOfAnswer = value;
+    setContentQuestion(tempContetQuestion);
+    handleSetContentQuestion(tempContetQuestion);
+  };
 
   const handleUptateListAnswer = (listAnswer: string[], index: number) => {
     let tempContetQuestion = [...contentQuestion];
@@ -103,14 +111,16 @@ export default function CustomizedAccordions({
       typeOfQuestion: 'Image with caption',
       caption: '',
       listAnswer: ['', '', '', '', ''],
-      file: undefined
+      file: undefined,
+      numberOfAnswer: '2'
     },
     {
       questionType: 'Optional',
       typeOfQuestion: 'Image with caption',
       caption: '',
       listAnswer: ['', '', '', '', ''],
-      file: undefined
+      file: undefined,
+      numberOfAnswer: '2'
     }
   ]);
   return (
@@ -227,6 +237,7 @@ export default function CustomizedAccordions({
                   <SurveyAnswers
                     handleUptateListAnswer={handleUptateListAnswer}
                     indexQuestion={index}
+                    handleSetNumberOfAnswer={handleSetNumberOfAnswer}
                   />
                 </Grid>
               </Box>

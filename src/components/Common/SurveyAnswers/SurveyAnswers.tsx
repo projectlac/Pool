@@ -36,9 +36,11 @@ const AnswerInput = styled(InputLabel)(({ theme }) => ({
 interface PropsSurveyAnswers {
   handleUptateListAnswer: (listAnswer: string[], indexQuestion) => void;
   indexQuestion: number;
+  handleSetNumberOfAnswer: (value: string, indexQuestion) => void;
 }
 function SurveyAnswers({
   handleUptateListAnswer,
+  handleSetNumberOfAnswer,
   indexQuestion
 }: PropsSurveyAnswers) {
   const [numberOfAnswer, setNumberOfAnswer] = React.useState<string>('2');
@@ -51,6 +53,7 @@ function SurveyAnswers({
   ]);
   const handleChangeNumberOfAnswer = (event: SelectChangeEvent) => {
     setNumberOfAnswer(event.target.value);
+    handleSetNumberOfAnswer(event.target.value, indexQuestion);
   };
 
   const handleFillAnswer = (

@@ -17,7 +17,7 @@ export default function SelectDuration({
   title,
   handleTime
 }: PropsTime) {
-  const [age, setAge] = React.useState<string>('10s');
+  const [age, setAge] = React.useState<string>('10');
 
   React.useEffect(() => {
     setAge(defaultValue);
@@ -52,7 +52,7 @@ export default function SelectDuration({
         {value &&
           value.map((d, index) => (
             <MenuItem value={d} key={index}>
-              {d}
+              {d}s
             </MenuItem>
           ))}
       </Select>

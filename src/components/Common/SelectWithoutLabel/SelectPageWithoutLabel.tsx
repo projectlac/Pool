@@ -4,16 +4,18 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import * as React from 'react';
 
 export default function SelectPageWithoutLabel(props) {
-  const [age, setAge] = React.useState<string>('10');
+  const { handleSetPage } = props;
+  const [page, setPage] = React.useState<string>('1');
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    setPage(event.target.value);
+    handleSetPage(event.target.value);
   };
 
   return (
     <FormControl sx={{ minWidth: 75 }}>
       <Select
-        value={age}
+        value={page}
         onChange={handleChange}
         inputProps={{ 'aria-label': 'Without label' }}
         sx={{
@@ -31,8 +33,8 @@ export default function SelectPageWithoutLabel(props) {
           }
         }}
       >
-        <MenuItem value={'10'}>10</MenuItem>
-        <MenuItem value={'20'}>20</MenuItem>
+        <MenuItem value={'1'}>10</MenuItem>
+        <MenuItem value={'2'}>20</MenuItem>
       </Select>
     </FormControl>
   );

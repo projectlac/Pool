@@ -21,6 +21,11 @@ import { CryptoOrder, CryptoOrderStatus } from 'src/models/crypto_order';
 
 interface RecentOrdersTableProps {
   className?: string;
+  handleSetPage: (page: number) => void;
+  handleSetIndex: (index: number) => void;
+  total: number;
+  index: number;
+  page: number;
   cryptoOrders: CryptoOrder[];
 }
 
@@ -30,7 +35,7 @@ const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
       text: 'Draft',
       color: '#FF1943'
     },
-    publish: {
+    Ongoing: {
       text: 'Published',
       color: '#44D600'
     }
@@ -41,7 +46,14 @@ const getStatusLabel = (cryptoOrderStatus: CryptoOrderStatus): JSX.Element => {
   return <Typography color={color}>{text}</Typography>;
 };
 
-const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
+const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
+  cryptoOrders,
+  handleSetPage,
+  handleSetIndex,
+  index,
+  page,
+  total
+}) => {
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState<string[]>(
     []
   );
@@ -81,7 +93,14 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
   return (
     <>
       <Box flex={1} pb={2}>
-        <BulkActions selectedCryptoOrders={selectedCryptoOrders} />
+        <BulkActions
+          url={'content-pack'}
+          selectedCryptoOrders={selectedCryptoOrders}
+          total={total}
+          handleSetIndex={handleSetIndex}
+          page={page}
+          index={index}
+        />
       </Box>
       <Card>
         <Divider />
@@ -171,7 +190,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                           noWrap
                           sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          {cryptoOrder.contentPackName}
+                          {cryptoOrder.name}
                         </Typography>
                       </Link>
                     </TableCell>
@@ -194,11 +213,15 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                         gutterBottom
                         noWrap
                       >
-                        {format(cryptoOrder.lastUpdate, ' dd MMMM, yyyy')}
+                        {`${cryptoOrder.createdDate.split('T')[0]}/${
+                          cryptoOrder.createdDate.split('T')[1]
+                        }`}
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{getStatusLabel(cryptoOrder.status)}</TableCell>
+                    <TableCell>
+                      {getStatusLabel(cryptoOrder.contentPackStatus)}
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -207,7 +230,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
         </TableContainer>
       </Card>
       <Box pt={2}>
-        <Pagination />
+        <Pagination
+          page={page}
+          index={index}
+          total={total}
+          handleSetPage={handleSetPage}
+          handleSetIndex={handleSetIndex}
+        />
       </Box>
     </>
   );

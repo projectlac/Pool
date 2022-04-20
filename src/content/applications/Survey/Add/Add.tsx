@@ -9,6 +9,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import { format } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import CustomizedAccordions from 'src/components/Common/Accordions/CustomizedAccordions';
@@ -21,10 +22,13 @@ import { ContentQuestion, PropsEdit } from 'src/models';
 
 function Add({ editId, editMode }: PropsEdit) {
   const [numberOfQuestions, setNumberOfQuestions] = useState<string>('1');
+
+  const [idContentPack, setIdContentPack] = useState<string>(undefined);
+
   const [surveyDurationFrom, setSurveyDurationFrom] =
-    React.useState<Date | null>(new Date('2014-08-18T21:11:54'));
+    React.useState<Date | null>(new Date());
   const [surveyDurationTo, setSurveyDurationTo] = React.useState<Date | null>(
-    new Date('2014-08-18T21:11:54')
+    new Date()
   );
 
   const [contentQuestion, setContentQuestion] = React.useState<
@@ -55,10 +59,57 @@ function Add({ editId, editMode }: PropsEdit) {
   });
 
   const onSubmit = (data) => {
-    console.log('contentQuestion', contentQuestion);
-    console.log(data);
-    console.log('from', surveyDurationFrom);
-    console.log('to', surveyDurationTo);
+    const {
+      headerWelcome,
+      surveyName,
+      surveyDescription,
+      bodyWelcome,
+      headerThankYou,
+      headerExpired,
+      bodyExpired,
+      bodyThankYou
+    } = data;
+
+    const formData = new FormData();
+    formData.append('Name', surveyName);
+
+    formData.append('Description', surveyDescription);
+
+    formData.append('HeaderWelcome', headerWelcome);
+
+    formData.append('BodyWelcome', bodyWelcome);
+
+    formData.append('HeaderThankyou', headerThankYou);
+
+    formData.append('BodyThankyou', bodyThankYou);
+
+    formData.append('HeaderExpired', headerExpired);
+
+    formData.append('BodyExpired', bodyExpired);
+
+    formData.append('StartSurveyDate', format(surveyDurationFrom, 'dd-MM-yyy'));
+
+    formData.append('EndSurveyDate', format(surveyDurationTo, 'dd-MM-yyy'));
+
+    // formData.append('ContentSurveyRequest.NumberOfQuestion', numberOfQuestions);
+
+    contentQuestion.map((d, i) => {
+      formData.append(`Questions[${i}].name`, `Question ${i}`);
+      formData.append(`Questions[${i}].questionType`, d.questionType);
+      formData.append(`Questions[${i}].typeOfQuestion`, d.typeOfQuestion);
+      formData.append(`Questions[${i}].questionCaption`, d.caption);
+      formData.append(`Questions[${i}].numberOfAnswer`, d.numberOfAnswer);
+
+      if (d.file !== undefined) {
+        formData.append(`Questions[${i}].image`, d.file);
+      }
+    });
+    if (idContentPack === undefined) {
+    }
+    // console.log('contentQuestion', contentQuestion);
+    // console.log(data);
+    // console.log('from', surveyDurationFrom);
+    // console.log('to', surveyDurationTo);
   };
 
   const submitFromNav = () => {
@@ -392,6 +443,7 @@ function Add({ editId, editMode }: PropsEdit) {
             onSubmit={submitFromNav}
             editMode={editMode}
             isShowDraftBtn={true}
+            page={'survey'}
           />
         </Box>
       </Grid>

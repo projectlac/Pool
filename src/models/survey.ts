@@ -5,5 +5,5 @@ export interface Survey {
   status: SurveyStatus;
   surveyName: string;
   lastUpdate: number;
-  duration : string;
+  duration: string;
 }

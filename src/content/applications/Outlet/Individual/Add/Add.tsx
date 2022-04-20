@@ -159,7 +159,11 @@ function Add({ editId, editMode }: PropsEdit) {
             </Grid>
           </Box>
 
-          <SubmitNav onSubmit={submitFromNav} editMode={editMode} />
+          <SubmitNav
+            page={'individual'}
+            onSubmit={submitFromNav}
+            editMode={editMode}
+          />
         </Box>
       </Grid>
     </Grid>

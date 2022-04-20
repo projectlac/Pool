@@ -4,4 +4,5 @@ export interface ContentQuestion {
   caption: string;
   listAnswer: string[];
   file?: File;
+  numberOfAnswer: string;
 }

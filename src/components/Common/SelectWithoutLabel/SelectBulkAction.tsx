@@ -4,16 +4,16 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import * as React from 'react';
 
 export default function SelectBulkAction(props) {
-  const [age, setAge] = React.useState<string>('Bulk Action');
+  const { handlesetAciton, action } = props;
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+    handlesetAciton(event.target.value);
   };
 
   return (
     <FormControl sx={{ minWidth: 90 }}>
       <Select
-        value={age}
+        value={action}
         onChange={handleChange}
         inputProps={{ 'aria-label': 'Without label' }}
         sx={{

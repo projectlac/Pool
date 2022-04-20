@@ -1,6 +1,9 @@
 import { Box, Button } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import { styled } from '@mui/material/styles';
+import contentPackApi from 'src/api/contentPackApi';
+import { AuthContext } from 'src/App';
+import { useNavigate } from 'react-router';
 const BoxNav = styled(Box)({
   height: '65px',
   position: 'fixed',
@@ -17,18 +20,48 @@ interface PropsSubmit {
   onSubmit: () => void;
   editMode: boolean;
   isShowDraftBtn?: boolean;
+  onDraft?: () => void;
+  idContentPack?: string;
+  page: string;
 }
 function SubmitNav({
   onSubmit,
+  idContentPack,
+  page,
+  onDraft,
   editMode,
   isShowDraftBtn = false
 }: PropsSubmit) {
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
+  const nav = useNavigate();
+  const deleleAction = () => {
+    switch (page) {
+      case 'content-pack':
+        deleteContentPack();
+    }
+  };
+
+  const deleteContentPack = () => {
+    contentPackApi.delete(idContentPack).then((res) => {
+      handleOpenToast();
+      handleChangeMessageToast(res.data.success);
+      if (res.data.success) {
+        nav(`${process.env.REACT_APP_BASE_NAME}/${page}`);
+      }
+    });
+  };
   return (
     <BoxNav>
-      <Box>{editMode && <Button color="error">Delete</Button>}</Box>
+      <Box>
+        {editMode && (
+          <Button color="error" onClick={deleleAction}>
+            Delete
+          </Button>
+        )}
+      </Box>
 
       <Box>
-        {isShowDraftBtn && <Button>Save as draft</Button>}
+        {isShowDraftBtn && <Button onClick={onDraft}>Save as draft</Button>}
         <Button variant="contained" type="submit" onClick={onSubmit}>
           Save
         </Button>

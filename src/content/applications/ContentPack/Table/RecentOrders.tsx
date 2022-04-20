@@ -1,75 +1,39 @@
+import { useEffect, useState } from 'react';
+import contentPackApi from 'src/api/contentPackApi';
 import { CryptoOrder } from 'src/models/crypto_order';
 import RecentOrdersTable from './RecentOrdersTable';
-import { subDays } from 'date-fns';
 
 function RecentOrders() {
-  const cryptoOrders: CryptoOrder[] = [
-    {
-      id: '1',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: new Date().getTime(),
-      status: 'publish',
+  const [cryptoOrders, setCryptoOrders] = useState<CryptoOrder[]>([]);
+  const [page, setPage] = useState<number>(10);
+  const [index, setIndex] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
 
-      numberOfContent: 34.4565
-    },
-    {
-      id: '2',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 1).getTime(),
-      status: 'publish',
+  const handleSetPage = (page: number) => {
+    setPage(page);
+  };
+  const handleSetIndex = (index: number) => {
+    setIndex(index);
+  };
+  useEffect(() => {
+    contentPackApi.getData(page, index).then((res) => {
+      if (res.data.success) {
+        setCryptoOrders(res.data.data);
+        setTotal(res.data.totalCount);
+      }
+    });
+  }, [page, index]);
 
-      numberOfContent: 6.58454334
-    },
-    {
-      id: '3',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 5).getTime(),
-      status: 'draft',
-      numberOfContent: 6.58454334
-    },
-    {
-      id: '4',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 55).getTime(),
-      status: 'publish',
-
-      numberOfContent: 6.58454334
-    },
-    {
-      id: '5',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 56).getTime(),
-      status: 'publish',
-
-      numberOfContent: 6.58454334
-    },
-    {
-      id: '6',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 33).getTime(),
-      status: 'publish',
-
-      numberOfContent: 6.58454334
-    },
-    {
-      id: '7',
-      contentPackName: 'Fiat Deposit',
-      lastUpdate: new Date().getTime(),
-      status: 'publish',
-
-      numberOfContent: 2.346546
-    },
-    {
-      id: '8',
-      contentPackName: 'Paypal Withdraw',
-      lastUpdate: subDays(new Date(), 22).getTime(),
-      status: 'publish',
-
-      numberOfContent: 3.345456
-    }
-  ];
-
-  return <RecentOrdersTable cryptoOrders={cryptoOrders} />;
+  return (
+    <RecentOrdersTable
+      cryptoOrders={cryptoOrders}
+      handleSetPage={handleSetPage}
+      handleSetIndex={handleSetIndex}
+      total={total}
+      page={page}
+      index={index}
+    />
+  );
 }
 
 export default RecentOrders;

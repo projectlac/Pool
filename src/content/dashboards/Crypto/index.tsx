@@ -1,13 +1,12 @@
+import { Box, Container, Grid, Typography } from '@mui/material';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-// import PageHeader from './PageHeader';
-import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { Grid, Container, Box, Typography } from '@mui/material';
-import PageHeader from 'src/components/Header/PageHeader';
+import userApi from 'src/api/userApi';
 import SelectWithoutLabel from 'src/components/Common/SelectWithoutLabel/SelectWithoutLabel';
 import TimeLine from 'src/components/Common/TimeLine/TimeLine';
-import React, { useEffect } from 'react';
-import userApi from 'src/api/userApi';
-import { format, subDays } from 'date-fns';
+import PageHeader from 'src/components/Header/PageHeader';
+// import PageHeader from './PageHeader';
+import PageTitleWrapper from 'src/components/PageTitleWrapper';
 import { Audit } from 'src/models/audit';
 function DashboardCrypto() {
   const [day, setDay] = React.useState<string>('Today');
@@ -15,11 +14,11 @@ function DashboardCrypto() {
   const covertTime = (time: string) => {
     switch (time) {
       case 'Last 7 days':
-        return format(subDays(new Date(), 7), 'yyyy-MM-dd');
+        return 7;
       case 'Last 30 days':
-        return format(subDays(new Date(), 30), 'yyyy-MM-dd');
+        return 30;
       default:
-        return format(subDays(new Date(), 0), 'yyyy-MM-dd');
+        return 1;
     }
   };
   const handleChangeDate = (time: string) => {
