@@ -76,7 +76,7 @@ function Add({ editId, editMode }: PropsEdit) {
     trigger('bodyWelcome');
     trigger('bodyThankYou');
     trigger('bodyExpired');
-  }, []);
+  }, [register, trigger]);
 
   return (
     <Grid container>

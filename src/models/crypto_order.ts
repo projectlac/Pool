@@ -5,6 +5,5 @@ export interface CryptoOrder {
   status: CryptoOrderStatus;
   contentPackName: string;
   lastUpdate: number;
-
   numberOfContent: number;
 }

@@ -62,7 +62,7 @@ function Add({ editId, editMode }: PropsEdit) {
         });
       } catch (error) {}
     }
-  }, [editId]);
+  }, [editId, setValue]);
 
   const password = useRef({});
   password.current = watch('password', '');

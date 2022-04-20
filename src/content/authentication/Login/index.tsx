@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Card,
   Container,
   FormControl,
   FormControlLabel,
@@ -12,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import loginApi from 'src/api/loginApi';
 import { AuthContext } from 'src/App';
+import logo from 'src/assets/images/logo/Image 9.png';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import BpCheckbox from 'src/components/Common/BpCheckbox';
@@ -58,14 +58,12 @@ function Login() {
         backgroundSize: 'cover'
       }}
     >
-      <Container maxWidth="lg" sx={{ height: '100vh', pt: 15 }}>
-        <Card sx={{ p: { md: 10, xs: 3 } }}>
-          <Typography variant="h1" component="h1" align="center" sx={{ mb: 2 }}>
-            Login
-          </Typography>
-          <Typography variant="h3" component="h3" align="center">
-            Content Management System
-          </Typography>
+      <Container maxWidth="lg" sx={{ height: '100vh', pt: 10 }}>
+        <Box sx={{ p: { md: 8, xs: 3 } }}>
+          <Box textAlign={'center'}>
+            <img src={logo} alt="" />
+          </Box>
+
           <Box
             sx={{
               display: 'flex',
@@ -85,8 +83,7 @@ function Login() {
                   height: '53px'
                 },
 
-                width: { md: '70ch', xs: '100%' },
-                mt: 10
+                width: { md: '70ch', xs: '100%' }
               }}
               noValidate
               autoComplete="off"
@@ -166,7 +163,7 @@ function Login() {
               </Button>
             </Box>
           </Box>
-        </Card>
+        </Box>
       </Container>
     </Box>
   );

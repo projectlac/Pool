@@ -1,7 +1,7 @@
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Box, CssBaseline } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRoutes } from 'react-router-dom';
 import './assets/styles/global.scss';
 import Toast from './components/Common/Toast/Toast';
