@@ -105,6 +105,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     <ErrorTitle>{errors.email.message}</ErrorTitle>
                   )}
                 </LabelInput>
+                {/* eslint-disable */}
                 <BootstrapInput
                   sx={{
                     '& .MuiInputBase-input': {
@@ -127,6 +128,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     }
                   })}
                 />
+                {/* eslint-enable */}
               </FormControl>
             </Box>
             {!editId && (

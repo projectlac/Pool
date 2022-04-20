@@ -1,31 +1,47 @@
-import { useRoutes } from 'react-router-dom';
-import routes from './router';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import ThemeProvider from './theme/ThemeProvider';
 import { Box, CssBaseline } from '@mui/material';
-import { useEffect, useState } from 'react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRoutes } from 'react-router-dom';
 import './assets/styles/global.scss';
-
-import { useNavigate } from 'react-router-dom';
+import Toast from './components/Common/Toast/Toast';
+import routes from './router';
+import ThemeProvider from './theme/ThemeProvider';
 export const AuthContext = React.createContext(null);
 const App = () => {
   const [isLogin, setIsLogin] = useState<boolean>(
     Boolean(localStorage.getItem('access_token'))
   );
-  const nav = useNavigate();
 
   const [updated, setUpdated] = useState<boolean>(false);
+
+  const [openToast, setOpenToast] = useState<boolean>(false);
+
+  const [message, setMessage] = useState<string>('');
+
+  const handleOpenToast = () => {
+    setOpenToast(true);
+  };
+
+  const handleCloseToast = () => {
+    setOpenToast(false);
+  };
+
+  const handleChangeMessageToast = (msg: string) => {
+    setMessage(msg);
+  };
+
   const updateSuccess = () => {
     setUpdated(true);
     setTimeout(() => {
       setUpdated(false);
     }, 500);
   };
+
   const handleLoginIn = () => {
     setIsLogin(true);
   };
+
   const handleLoginOut = () => {
     setIsLogin(false);
   };
@@ -35,7 +51,10 @@ const App = () => {
     updated,
     updateSuccess,
     handleLoginIn,
-    handleLoginOut
+    handleLoginOut,
+    handleOpenToast,
+    handleCloseToast,
+    handleChangeMessageToast
   };
 
   const content = useRoutes(
@@ -43,17 +62,19 @@ const App = () => {
     `${process.env.REACT_APP_BASE_NAME}`
   );
 
-  const iframe = document.getElementsByTagName('iframe');
-  useEffect(() => {
-    iframe[0] && iframe[0].remove();
-  }, [iframe]);
-
   return (
     <AuthContext.Provider value={value}>
       <ThemeProvider>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <CssBaseline />
-          <Box>{content}</Box>
+          <Box>
+            <Box>{content}</Box>
+            <Toast
+              open={openToast}
+              message={message}
+              onClose={handleCloseToast}
+            />
+          </Box>
         </LocalizationProvider>
       </ThemeProvider>
     </AuthContext.Provider>

@@ -3,13 +3,17 @@ import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
 import * as React from 'react';
 
-export default function Toast(props) {
-  const { open, message, onClose } = props;
+interface PropsToast {
+  open: boolean;
+  message: string;
+  onClose: () => void;
+}
+export default function Toast({ open, message, onClose }: PropsToast) {
   React.useEffect(() => {
     setTimeout(() => {
       onClose();
     }, 3000);
-  }, [open]);
+  }, [open, onClose]);
   const action = (
     <React.Fragment>
       <IconButton
@@ -18,7 +22,7 @@ export default function Toast(props) {
         color="inherit"
         onClick={onClose}
       >
-        <CloseIcon fontSize="small" onClick={onClose} />
+        <CloseIcon fontSize="small" />
       </IconButton>
     </React.Fragment>
   );

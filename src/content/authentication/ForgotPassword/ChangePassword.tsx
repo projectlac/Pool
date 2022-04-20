@@ -1,21 +1,16 @@
 import { Box, Button, FormControl, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import loginApi from 'src/api/loginApi';
+import { AuthContext } from 'src/App';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 
 interface PropsChangePassword {
-  handleChangeMessage: (msg: string) => void;
-  handleOpenMessage: () => void;
   email: string;
 }
-function ChangePassword({
-  handleChangeMessage,
-  handleOpenMessage,
-  email
-}: PropsChangePassword) {
+function ChangePassword({ email }: PropsChangePassword) {
   const {
     register,
     handleSubmit,
@@ -25,6 +20,7 @@ function ChangePassword({
     mode: 'onChange',
     reValidateMode: 'onChange'
   });
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
 
   const nav = useNavigate();
 
@@ -42,12 +38,12 @@ function ChangePassword({
         })
         .then((res) => {
           if (res.data.success) {
-            handleChangeMessage(res.data.message);
-            handleOpenMessage();
+            handleChangeMessageToast(res.data.message);
+            handleOpenToast();
             nav(`${process.env.REACT_APP_BASE_NAME}/login`);
           } else {
-            handleChangeMessage(res.data.message);
-            handleOpenMessage();
+            handleChangeMessageToast(res.data.message);
+            handleOpenToast();
           }
         });
     } catch (error) {}

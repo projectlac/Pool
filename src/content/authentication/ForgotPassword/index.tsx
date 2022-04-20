@@ -6,32 +6,20 @@ import {
   FormControl,
   Typography
 } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import loginApi from 'src/api/loginApi';
+import { AuthContext } from 'src/App';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
-import Toast from 'src/components/Common/Toast/Toast';
 import ChangePassword from './ChangePassword';
 
 function ForgotPassword() {
-  // const { handleLoginIn } = useContext(AuthContext);
   const [checkFillEmail, setCheckFillEmail] = useState<Boolean>(false);
   const [fillEmail, setFillEmail] = useState<string>('');
-  const { register, handleSubmit, watch } = useForm();
-  // const nav = useNavigate();
-  const [open, setOpen] = useState<boolean>(false);
-  const [errMsg, setErrMsg] = useState<string>('Something wrong');
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const { register, handleSubmit } = useForm();
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
 
-  const handleChangeMessage = (msg: string) => {
-    setErrMsg(msg);
-  };
-  const handleOpenMessage = () => {
-    setOpen(true);
-  };
   const onSubmit = (data) => {
     const { email } = data;
     try {
@@ -40,8 +28,8 @@ function ForgotPassword() {
           setCheckFillEmail(true);
           setFillEmail(email);
         } else {
-          handleChangeMessage(res.data.message);
-          setOpen(true);
+          handleChangeMessageToast(res.data.message);
+          handleOpenToast();
         }
       });
     } catch (error) {}
@@ -114,14 +102,9 @@ function ForgotPassword() {
               </Box>
             </Box>
           ) : (
-            <ChangePassword
-              handleChangeMessage={handleChangeMessage}
-              handleOpenMessage={handleOpenMessage}
-              email={fillEmail}
-            />
+            <ChangePassword email={fillEmail} />
           )}
         </Card>
-        <Toast open={open} onClose={handleClose} message={errMsg} />
       </Container>
     </Box>
   );

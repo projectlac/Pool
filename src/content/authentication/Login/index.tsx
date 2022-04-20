@@ -7,40 +7,44 @@ import {
   FormControlLabel,
   Typography
 } from '@mui/material';
-
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import loginApi from 'src/api/loginApi';
-
 import { AuthContext } from 'src/App';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import BpCheckbox from 'src/components/Common/BpCheckbox';
-import Toast from 'src/components/Common/Toast/Toast';
+import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 
 function Login() {
-  const { handleLoginIn } = useContext(AuthContext);
-  const { register, handleSubmit } = useForm();
+  const { handleLoginIn, handleOpenToast, handleChangeMessageToast } =
+    useContext(AuthContext);
+  const {
+    register,
+    handleSubmit,
+
+    formState: { errors }
+  } = useForm({
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  });
   const nav = useNavigate();
-  const [open, setOpen] = useState<boolean>(false);
-  const [errMsg, setErrMsg] = useState<string>('');
-  const handleClose = () => {
-    setOpen(false);
-  };
+
   const onSubmit = (data) => {
     const { username, password } = data;
-    loginApi.login({ userName: username, password }).then((res) => {
-      if (res.data.success) {
-        localStorage.setItem('access_token', res.data.data.token);
-        handleLoginIn();
-        nav(`${process.env.REACT_APP_BASE_NAME}/dashboards/`);
-      } else {
-        setErrMsg(res.data.data);
-        setOpen(true);
-      }
-    });
+    try {
+      loginApi.login({ userName: username, password }).then((res) => {
+        if (res.data.success) {
+          localStorage.setItem('access_token', res.data.data.token);
+          handleLoginIn();
+          nav(`${process.env.REACT_APP_BASE_NAME}/dashboards/`);
+        } else {
+          handleChangeMessageToast(res.data.data);
+          handleOpenToast();
+        }
+      });
+    } catch (error) {}
 
     //
   };
@@ -91,22 +95,34 @@ function Login() {
               <FormControl variant="standard" sx={{ width: '100%' }}>
                 <LabelInput shrink htmlFor="bootstrap-input">
                   Username
+                  {errors.username && (
+                    <ErrorTitle>{errors.username.message}</ErrorTitle>
+                  )}
                 </LabelInput>
                 <BootstrapInput
                   defaultValue=""
+                  error={Boolean(errors.username)}
                   id="bootstrap-input"
                   placeholder="eg: Jaison"
-                  {...register('username')}
+                  {...register('username', {
+                    required: '* This field is require'
+                  })}
                 />
               </FormControl>
               <FormControl variant="standard" sx={{ width: '100%' }}>
                 <LabelInput shrink htmlFor="bootstrap-input">
                   Password
+                  {errors.password && (
+                    <ErrorTitle>{errors.password.message}</ErrorTitle>
+                  )}
                 </LabelInput>
                 <BootstrapInput
                   type="password"
+                  error={Boolean(errors.password)}
                   autoComplete="current-password"
-                  {...register('password')}
+                  {...register('password', {
+                    required: '* This field is require'
+                  })}
                 />
               </FormControl>
 
@@ -151,7 +167,6 @@ function Login() {
             </Box>
           </Box>
         </Card>
-        <Toast open={open} onClose={handleClose} message={errMsg} />
       </Container>
     </Box>
   );
