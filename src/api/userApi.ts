@@ -2,8 +2,10 @@ import { PromiseApi } from 'src/models';
 import { UserParams } from 'src/models/user';
 import axiosJsonClient from './axiosJsonClient';
 const userApi = {
-  getList(): Promise<PromiseApi> {
-    return axiosJsonClient.get('Users/list-user');
+  getList(page: number, index: number): Promise<PromiseApi> {
+    return axiosJsonClient.get(
+      `Users/list-user?pageSize=${page}&pageIndex=${index}`
+    );
   },
   getUserById(id: string): Promise<PromiseApi> {
     return axiosJsonClient.get(`Users/get-user-by-id?userId=${id}`);

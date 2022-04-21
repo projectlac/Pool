@@ -103,7 +103,6 @@ function Add({ editId, editMode }: PropsEdit) {
             ...data,
             file: undefined
           }));
-          console.log(tempData);
 
           setFileList(tempData);
         }

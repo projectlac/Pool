@@ -37,13 +37,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 interface PropsTableUpload {
   numberOfContent: string;
   indexQuestion: number;
+  fileName: string;
   handleUploadFile: (file: File, indexQuestion: number) => void;
 }
 
 export default function UploadTableSurvey({
   numberOfContent,
   handleUploadFile,
-  indexQuestion
+  indexQuestion,
+  fileName
 }: PropsTableUpload) {
   const [defautFileList, setDefautFileList] = React.useState<File>(undefined);
   const handleUpload = (e) => {
@@ -82,6 +84,8 @@ export default function UploadTableSurvey({
               <StyledTableCell component="th" scope="row">
                 {defautFileList !== undefined ? (
                   defautFileList.name
+                ) : fileName !== undefined ? (
+                  fileName
                 ) : (
                   <Box
                     component="label"
@@ -103,7 +107,7 @@ export default function UploadTableSurvey({
                 )}
               </StyledTableCell>
               <StyledTableCell align="center">
-                {defautFileList !== undefined ? (
+                {defautFileList !== undefined || fileName !== undefined ? (
                   <Box>
                     <Box component="label">
                       <DriveFileMoveIcon />

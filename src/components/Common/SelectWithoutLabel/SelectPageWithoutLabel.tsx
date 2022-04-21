@@ -5,7 +5,7 @@ import * as React from 'react';
 
 export default function SelectPageWithoutLabel(props) {
   const { handleSetPage } = props;
-  const [page, setPage] = React.useState<string>('1');
+  const [page, setPage] = React.useState<string>('10');
 
   const handleChange = (event: SelectChangeEvent) => {
     setPage(event.target.value);
@@ -33,8 +33,8 @@ export default function SelectPageWithoutLabel(props) {
           }
         }}
       >
-        <MenuItem value={'1'}>10</MenuItem>
-        <MenuItem value={'2'}>20</MenuItem>
+        <MenuItem value={'10'}>10</MenuItem>
+        <MenuItem value={'20'}>20</MenuItem>
       </Select>
     </FormControl>
   );

@@ -8,8 +8,9 @@ import {
   InputLabel
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
+import React, { useEffect } from 'react';
 import BootstrapInput from '../BootstrapInput/BootstrapInput';
+import { Answer } from 'src/models';
 
 const AnswerInput = styled(InputLabel)(({ theme }) => ({
   fontSize: 21,
@@ -34,22 +35,30 @@ const AnswerInput = styled(InputLabel)(({ theme }) => ({
 }));
 
 interface PropsSurveyAnswers {
-  handleUptateListAnswer: (listAnswer: string[], indexQuestion) => void;
+  handleUptateListAnswer: (listAnswer: Answer[], indexQuestion) => void;
   indexQuestion: number;
+
+  complete: boolean;
+  numberOfAnswerProps: string;
+  listAnswerProps: Answer[] | string[];
   handleSetNumberOfAnswer: (value: string, indexQuestion) => void;
 }
 function SurveyAnswers({
   handleUptateListAnswer,
   handleSetNumberOfAnswer,
+  numberOfAnswerProps,
+  complete,
+  listAnswerProps,
   indexQuestion
 }: PropsSurveyAnswers) {
   const [numberOfAnswer, setNumberOfAnswer] = React.useState<string>('2');
-  const [listAnswer, setListAnswer] = React.useState<string[]>([
-    '',
-    '',
-    '',
-    '',
-    ''
+
+  const [listAnswer, setListAnswer] = React.useState<Answer[]>([
+    { answerStr: '', id: '' },
+    { answerStr: '', id: '' },
+    { answerStr: '', id: '' },
+    { answerStr: '', id: '' },
+    { answerStr: '', id: '' }
   ]);
   const handleChangeNumberOfAnswer = (event: SelectChangeEvent) => {
     setNumberOfAnswer(event.target.value);
@@ -61,10 +70,25 @@ function SurveyAnswers({
     index: number
   ) => {
     let tempAnswer = [...listAnswer];
-    tempAnswer[index] = e.target.value;
+    tempAnswer[index].answerStr = e.target.value;
     setListAnswer(tempAnswer);
     handleUptateListAnswer(tempAnswer, indexQuestion);
   };
+
+  useEffect(() => {
+    let temp = [...listAnswer];
+
+    if (listAnswerProps !== undefined && listAnswerProps.length > 0) {
+      listAnswerProps.forEach((d, i) => {
+        temp[i] = d;
+      });
+    }
+
+    setListAnswer(temp);
+    setNumberOfAnswer(numberOfAnswerProps);
+    handleUptateListAnswer(temp, indexQuestion);
+  }, [complete]);
+
   return (
     <div>
       <Box sx={{ mt: 3 }}>
@@ -124,6 +148,7 @@ function SurveyAnswers({
                 (Max. 250 characters)
               </span>
             </AnswerInput>
+
             <BootstrapInput
               sx={{
                 '& .MuiInputBase-input': {
@@ -132,7 +157,7 @@ function SurveyAnswers({
                   height: '35px'
                 }
               }}
-              defaultValue=""
+              value={listAnswer[index].answerStr}
               placeholder="Fill Answer"
               id="bootstrap-input"
               onChange={(e) => {

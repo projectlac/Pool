@@ -1,4 +1,3 @@
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import {
   Box,
@@ -18,21 +17,31 @@ import PropTypes from 'prop-types';
 import { ChangeEvent, FC, useState } from 'react';
 import { Link } from 'react-router-dom';
 import BulkActions from 'src/components/Common/BulkAction/BulkActions';
+import DeleteSurvey from 'src/components/Common/Dialog/DeleteSurvey';
 import Pagination from 'src/components/Common/Pagination/Pagination';
 import { Survey, SurveyStatus } from 'src/models/survey';
 
 interface RecentOrdersTableProps {
   className?: string;
+  handleSetPage: (page: number) => void;
+  handleSetIndex: (index: number) => void;
+  total: number;
+  index: number;
+  page: number;
   cryptoOrders: Survey[];
 }
 
 const getStatusLabel = (cryptoOrderStatus: SurveyStatus): JSX.Element => {
   const map = {
-    draft: {
+    '0': {
       text: 'Draft',
       color: '#FF1943'
     },
-    publish: {
+    '1': {
+      text: 'Published',
+      color: '#44D600'
+    },
+    '2': {
       text: 'Published',
       color: '#44D600'
     }
@@ -43,7 +52,14 @@ const getStatusLabel = (cryptoOrderStatus: SurveyStatus): JSX.Element => {
   return <Typography color={color}>{text}</Typography>;
 };
 
-const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
+const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
+  cryptoOrders,
+  handleSetPage,
+  handleSetIndex,
+  index,
+  page,
+  total
+}) => {
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState<string[]>(
     []
   );
@@ -60,6 +76,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
 
   const handleSelectOneCryptoOrder = (
     event: ChangeEvent<HTMLInputElement>,
+
     cryptoOrderId: string
   ): void => {
     if (!selectedCryptoOrders.includes(cryptoOrderId)) {
@@ -83,7 +100,14 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
   return (
     <>
       <Box flex={1} pb={2}>
-        <BulkActions selectedCryptoOrders={selectedCryptoOrders} />
+        <BulkActions
+          url={'survey'}
+          selectedCryptoOrders={selectedCryptoOrders}
+          total={total}
+          handleSetIndex={handleSetIndex}
+          page={page}
+          index={index}
+        />
       </Box>
       <Card>
         <Divider />
@@ -174,7 +198,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                           noWrap
                           sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          {cryptoOrder.surveyName}{' '}
+                          {cryptoOrder.name}{' '}
                         </Typography>
                       </Link>
                     </TableCell>
@@ -197,17 +221,20 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                         gutterBottom
                         noWrap
                       >
-                        {format(cryptoOrder.lastUpdate, ' dd MMMM, yyyy')}
+                        {cryptoOrder.updatedDate.split('T')[0]}/
+                        {cryptoOrder.updatedDate.split('T')[1]}
                       </Typography>
                     </TableCell>
 
-                    <TableCell>{getStatusLabel(cryptoOrder.status)}</TableCell>
+                    <TableCell>
+                      {getStatusLabel(cryptoOrder.surveyStatus)}
+                    </TableCell>
                     <TableCell sx={{ display: 'flex' }}>
                       <Box>
                         <ExitToAppOutlinedIcon color="primary" />
                       </Box>
                       <Box ml={1}>
-                        <CloseOutlinedIcon color="error" />
+                        <DeleteSurvey id={cryptoOrder.id} />
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -218,7 +245,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
         </TableContainer>
       </Card>
       <Box pt={2}>
-        <Pagination />
+        <Pagination
+          page={page}
+          index={index}
+          total={total}
+          handleSetPage={handleSetPage}
+          handleSetIndex={handleSetIndex}
+        />
       </Box>
     </>
   );

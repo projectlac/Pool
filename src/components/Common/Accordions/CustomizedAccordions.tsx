@@ -14,6 +14,7 @@ import { ContentQuestion } from 'src/models';
 import CustomizeCheckBox from '../CheckBox/CustomizeCheckBox';
 import SurveyAnswers from '../SurveyAnswers/SurveyAnswers';
 import UploadTableSurvey from '../Table/UploadTableSurvey';
+import { Answer } from 'src/models';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -53,16 +54,21 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 interface PropsAccordions {
   numberOfQuestions: number;
+  complete: boolean;
+  contentQuestionList: any;
   handleSetContentQuestion: (content: ContentQuestion[]) => void;
 }
 export default function CustomizedAccordions({
   numberOfQuestions,
-
+  contentQuestionList,
+  complete,
   handleSetContentQuestion
 }: PropsAccordions) {
+  const [completedLoadAnswer, setCompletedLoadAnswer] =
+    React.useState<boolean>(false);
   const handleGetDataFromEditor = (data: string, index: number) => {
     let tempContetQuestion = [...contentQuestion];
-    tempContetQuestion[index].caption = data;
+    tempContetQuestion[index].questionCaption = data;
     setContentQuestion(tempContetQuestion);
     handleSetContentQuestion(tempContetQuestion);
   };
@@ -83,9 +89,9 @@ export default function CustomizedAccordions({
     handleSetContentQuestion(tempContetQuestion);
   };
 
-  const handleUptateListAnswer = (listAnswer: string[], index: number) => {
+  const handleUptateListAnswer = (listAnswer: Answer[], index: number) => {
     let tempContetQuestion = [...contentQuestion];
-    tempContetQuestion[index].listAnswer = listAnswer;
+    tempContetQuestion[index].answers = listAnswer;
     setContentQuestion(tempContetQuestion);
     handleSetContentQuestion(tempContetQuestion);
   };
@@ -109,20 +115,29 @@ export default function CustomizedAccordions({
     {
       questionType: 'Optional',
       typeOfQuestion: 'Image with caption',
-      caption: '',
-      listAnswer: ['', '', '', '', ''],
+      questionCaption: '',
+      lstAnswers: ['', '', '', '', ''],
       file: undefined,
       numberOfAnswer: '2'
     },
     {
       questionType: 'Optional',
       typeOfQuestion: 'Image with caption',
-      caption: '',
-      listAnswer: ['', '', '', '', ''],
+      questionCaption: '',
+      lstAnswers: ['', '', '', '', ''],
       file: undefined,
       numberOfAnswer: '2'
     }
   ]);
+
+  React.useEffect(() => {
+    if (complete) {
+      setContentQuestion(contentQuestionList);
+      handleSetContentQuestion(contentQuestionList);
+      setCompletedLoadAnswer(true);
+    }
+  }, [complete]);
+
   return (
     <div>
       {[...Array(numberOfQuestions)].map((d, index) => (
@@ -163,7 +178,7 @@ export default function CustomizedAccordions({
                 </Typography>
                 <CustomizeCheckBox
                   listData={['Mandatory', 'Optional']}
-                  defaultValue={'Optional'}
+                  defaultValue={contentQuestion[index].questionType}
                   title={'questionType'}
                   indexQuestion={index}
                   handleCheckBox={handleCheckBox}
@@ -182,7 +197,7 @@ export default function CustomizedAccordions({
                 </Typography>
                 <CustomizeCheckBox
                   listData={['Text', 'Image with caption']}
-                  defaultValue={'Image with caption'}
+                  defaultValue={contentQuestion[index].typeOfQuestion}
                   title={'typeOfQuestion'}
                   indexQuestion={index}
                   handleCheckBox={handleCheckBox}
@@ -195,6 +210,7 @@ export default function CustomizedAccordions({
                     'Image with caption' && (
                     <UploadTableSurvey
                       indexQuestion={index}
+                      fileName={contentQuestion[index]?.imageUploadUrl}
                       numberOfContent="1"
                       handleUploadFile={handleUploadFile}
                     />
@@ -227,7 +243,7 @@ export default function CustomizedAccordions({
                         </span>
                       </Typography>
                       <TinyEditorQuestionMode
-                        initialValue={''}
+                        initialValue={contentQuestion[index].questionCaption}
                         limit={250}
                         handleGetDataFromEditor={handleGetDataFromEditor}
                         indexQuestion={index}
@@ -235,8 +251,11 @@ export default function CustomizedAccordions({
                     </FormControl>
                   </Box>
                   <SurveyAnswers
+                    numberOfAnswerProps={contentQuestion[index].numberOfAnswer}
+                    listAnswerProps={contentQuestion[index].answers}
                     handleUptateListAnswer={handleUptateListAnswer}
                     indexQuestion={index}
+                    complete={completedLoadAnswer}
                     handleSetNumberOfAnswer={handleSetNumberOfAnswer}
                   />
                 </Grid>

@@ -21,21 +21,21 @@ import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import TinyEditor from 'src/components/TinyEditor/TinyEditor';
-import { ContentQuestion, PropsEdit } from 'src/models';
+import { Answer, ContentQuestion, PropsEdit } from 'src/models';
 
 function Add({ editId, editMode }: PropsEdit) {
   const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
-
+  const [status, setStatus] = useState<string>('1');
   const [numberOfQuestions, setNumberOfQuestions] = useState<string>('1');
-
   const [idContentPack, setIdContentPack] = useState<string>(undefined);
-
   const [surveyDurationFrom, setSurveyDurationFrom] =
     React.useState<Date | null>(new Date());
   const [surveyDurationTo, setSurveyDurationTo] = React.useState<Date | null>(
     new Date()
   );
 
+  const [complete, setComplete] = useState<boolean>(false);
+  const [answer, getAnswer] = useState<Answer[]>([]);
   const [contentQuestion, setContentQuestion] = React.useState<
     ContentQuestion[]
   >([]);
@@ -58,6 +58,7 @@ function Add({ editId, editMode }: PropsEdit) {
     handleSubmit,
     trigger,
     setValue,
+    getValues,
     formState: { errors }
   } = useForm({
     mode: 'onChange',
@@ -77,6 +78,7 @@ function Add({ editId, editMode }: PropsEdit) {
     } = data;
 
     const formData = new FormData();
+
     formData.append('Name', surveyName);
 
     formData.append('Description', surveyDescription);
@@ -93,32 +95,75 @@ function Add({ editId, editMode }: PropsEdit) {
 
     formData.append('BodyExpired', bodyExpired);
 
-    formData.append('StartSurveyDate', format(surveyDurationFrom, 'MM-dd-yyy'));
+    formData.append(
+      'StartSurveyDate',
+      format(new Date(surveyDurationFrom), 'MM-dd-yyy')
+    );
 
-    formData.append('EndSurveyDate', format(surveyDurationTo, 'MM-dd-yyy'));
+    formData.append(
+      'EndSurveyDate',
+      format(new Date(surveyDurationTo), 'MM-dd-yyy')
+    );
 
-    // formData.append('ContentSurveyRequest.NumberOfQuestion', numberOfQuestions);
+    formData.append('SurveyStatus', status);
+
+    formData.append('NumberOfQuestion', numberOfQuestions);
 
     contentQuestion.forEach((d, i) => {
-      formData.append(`Questions[${i}].name`, `Question ${i}`);
-      formData.append(`Questions[${i}].description`, `Question ${i}`);
+      if (d.id !== undefined) {
+        formData.append(`Questions[${i}].id`, d.id);
+      }
 
       formData.append(`Questions[${i}].questionType`, d.questionType);
       formData.append(`Questions[${i}].typeOfQuestion`, d.typeOfQuestion);
-      formData.append(`Questions[${i}].questionCaption`, d.caption);
+      formData.append(`Questions[${i}].questionCaption`, d.questionCaption);
       formData.append(`Questions[${i}].numberOfAnswer`, d.numberOfAnswer);
-      d.listAnswer.forEach((ans, index) => {
-        if (ans !== '') {
-          formData.append(`Questions[${i}].answers[${index}].answerStr`, ans);
-        }
-      });
-      if (d.file !== undefined) {
-        formData.append(`Questions[${i}].image`, d.file);
-      }
+
+      if (d.answers !== undefined)
+        [...Array(+numberOfQuestions)].forEach((ans, index) => {
+          if (editId === undefined) console.log(contentQuestion[index]);
+
+          contentQuestion[index].answers.forEach((getAnswer, key) => {
+            if (getAnswer.answerStr !== '') {
+              formData.append(
+                `Questions[${index}].answers[${key}].answerStr`,
+                getAnswer.answerStr
+              );
+            }
+          });
+        });
     });
-    if (idContentPack === undefined) {
+    if (editId === undefined) {
       try {
         surveyApi.add(formData).then((res) => {
+          handleChangeMessageToast(res.data.message);
+          handleOpenToast();
+          if (res.data.success) {
+            nav(`${process.env.REACT_APP_BASE_NAME}/survey`);
+          }
+        });
+      } catch (error) {
+        handleChangeMessageToast('Some thing went wrong!');
+        handleOpenToast();
+      }
+    } else {
+      formData.append(`Id`, editId);
+
+      [...Array(+numberOfQuestions)].forEach((d, index) => {
+        contentQuestion[index].answers.forEach((ans, key) => {
+          if (ans.answerStr) {
+            formData.append(
+              `Questions[${index}].answers[${key}].answerStr`,
+              ans.answerStr
+            );
+          }
+          if (ans.id) {
+            formData.append(`Questions[${index}].answers[${key}].id`, ans.id);
+          }
+        });
+      });
+      try {
+        surveyApi.update(formData).then((res) => {
           handleChangeMessageToast(res.data.message);
           handleOpenToast();
           if (res.data.success) {
@@ -136,7 +181,12 @@ function Add({ editId, editMode }: PropsEdit) {
     // console.log('to', surveyDurationTo);
   };
 
+  const submitAsDraft = () => {
+    setStatus('1');
+    handleSubmit(onSubmit);
+  };
   const submitFromNav = () => {
+    setStatus('2');
     handleSubmit(onSubmit);
   };
 
@@ -151,8 +201,45 @@ function Add({ editId, editMode }: PropsEdit) {
     trigger('bodyWelcome');
     trigger('bodyThankYou');
     trigger('bodyExpired');
+    setValue('bodyWelcome', '');
+    setValue('bodyThankYou', '');
+    setValue('bodyExpired', '');
   }, [register, trigger]);
 
+  useEffect(() => {
+    if (editId) {
+      surveyApi.getDataById(editId).then((res) => {
+        if (res.data.success) {
+          let data = res.data.data;
+
+          setValue('bodyWelcome', data.bodyWelcome);
+          setValue('bodyThankYou', data.bodyThankyou);
+          setValue('bodyExpired', data.bodyExpired);
+          setValue('headerWelcome', data.headerWelcome);
+          setValue('headerThankYou', data.headerThankyou);
+          setValue('headerExpired', data.headerExpired);
+          setValue('surveyName', data.name);
+          setValue('surveyDescription', data.description);
+          setSurveyDurationFrom(data.startSurveyDate);
+          setSurveyDurationFrom(data.endSurveyDate);
+          setNumberOfQuestions(data.numberOfQuestion);
+
+          let tempContent = [];
+          {
+            data.questionResponse.length > 0 &&
+              data.questionResponse.forEach((d, i) => {
+                tempContent.push(d);
+              });
+          }
+          // console.log(data.questionResponse);
+
+          setContentQuestion(tempContent);
+
+          setComplete(true);
+        }
+      });
+    }
+  }, [editId]);
   return (
     <Grid container>
       <Grid item md={12}>
@@ -301,7 +388,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     Body Text
                   </Typography>
                   <TinyEditor
-                    initialValue={''}
+                    initialValue={getValues('bodyWelcome') as string}
                     limit={9999999999}
                     handleGetDataFromEditor={handleGetDataFromEditor}
                     title={'bodyWelcome'}
@@ -355,7 +442,9 @@ function Add({ editId, editMode }: PropsEdit) {
 
               <Box sx={{ mt: 3 }}>
                 <CustomizedAccordions
+                  complete={complete}
                   numberOfQuestions={+numberOfQuestions}
+                  contentQuestionList={contentQuestion}
                   handleSetContentQuestion={handleSetContentQuestion}
                 />
               </Box>
@@ -403,7 +492,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     Body Text
                   </Typography>
                   <TinyEditor
-                    initialValue={''}
+                    initialValue={getValues('bodyThankYou') as string}
                     limit={9999999999}
                     title={'bodyThankYou'}
                     handleGetDataFromEditor={handleGetDataFromEditor}
@@ -454,7 +543,7 @@ function Add({ editId, editMode }: PropsEdit) {
                     Body Text
                   </Typography>
                   <TinyEditor
-                    initialValue={''}
+                    initialValue={getValues('bodyExpired') as string}
                     limit={9999999999}
                     title={'bodyExpired'}
                     handleGetDataFromEditor={handleGetDataFromEditor}
@@ -464,6 +553,8 @@ function Add({ editId, editMode }: PropsEdit) {
             </Grid>
           </Box>
           <SubmitNav
+            idContentPack={editId}
+            onDraft={submitAsDraft}
             onSubmit={submitFromNav}
             editMode={editMode}
             isShowDraftBtn={true}

@@ -1,73 +1,42 @@
-import { subDays } from 'date-fns';
+import { useContext, useEffect, useState } from 'react';
+import surveyApi from 'src/api/surveyApi';
+import { AuthContext } from 'src/App';
 import { Survey } from 'src/models/survey';
 import RecentOrdersTable from './RecentOrdersTable';
 
 function RecentOrders() {
-  const cryptoOrders: Survey[] = [
-    {
-      id: '1',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: new Date().getTime(),
-      status: 'publish',
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '2',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 1).getTime(),
-      status: 'publish',
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '3',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 5).getTime(),
-      status: 'draft',
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '4',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 55).getTime(),
-      status: 'publish',
+  const { updated } = useContext(AuthContext);
 
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '5',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 56).getTime(),
-      status: 'publish',
+  const [cryptoOrders, setCryptoOrders] = useState<Survey[]>([]);
+  const [page, setPage] = useState<number>(10);
+  const [index, setIndex] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
 
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '6',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: subDays(new Date(), 33).getTime(),
-      status: 'publish',
+  const handleSetPage = (page: number) => {
+    setPage(page);
+  };
+  const handleSetIndex = (index: number) => {
+    setIndex(index);
+  };
+  useEffect(() => {
+    surveyApi.getData(page, index).then((res) => {
+      if (res.data.success) {
+        setCryptoOrders(res.data.data);
+        setTotal(res.data.totalCount);
+      }
+    });
+  }, [page, index, updated]);
 
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '7',
-      surveyName: 'Fiat Deposit',
-      lastUpdate: new Date().getTime(),
-      status: 'publish',
-
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    },
-    {
-      id: '8',
-      surveyName: 'Paypal Withdraw',
-      lastUpdate: subDays(new Date(), 22).getTime(),
-      status: 'publish',
-
-      duration: '25 Mar, 2021 - 26 Mar, 2021'
-    }
-  ];
-
-  return <RecentOrdersTable cryptoOrders={cryptoOrders} />;
+  return (
+    <RecentOrdersTable
+      cryptoOrders={cryptoOrders}
+      handleSetPage={handleSetPage}
+      handleSetIndex={handleSetIndex}
+      total={total}
+      page={page}
+      index={index}
+    />
+  );
 }
 
 export default RecentOrders;

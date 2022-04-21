@@ -38,7 +38,7 @@ export default function CustomizeCheckBox({
       <RadioGroup
         aria-labelledby="demo-controlled-radio-buttons-group"
         name="controlled-radio-buttons-group"
-        value={value}
+        value={defaultValue}
         onChange={handleChange}
         sx={{
           flexDirection: 'row',

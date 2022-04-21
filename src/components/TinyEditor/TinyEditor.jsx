@@ -1,5 +1,5 @@
 import { Editor } from '@tinymce/tinymce-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function TinyEditor({ initialValue, limit, title, handleGetDataFromEditor }) {
     const sizeLimit = limit ?? 99999999;
@@ -12,7 +12,10 @@ export default function TinyEditor({ initialValue, limit, title, handleGetDataFr
             handleGetDataFromEditor(value, title);
         }
     };
-
+    useEffect(()=>{
+        setValue(initialValue)
+     
+    },[ initialValue])
     const handleBeforeAddUndo = (evt, editor) => {
         const length = editor.getContent({ format: 'text' }).length;
         // note that this is the opposite test as in handleUpdate
@@ -26,7 +29,7 @@ export default function TinyEditor({ initialValue, limit, title, handleGetDataFr
         <>
             <Editor
                 apiKey="jvnq0huwvxzja1sev6byqabo1g6qc276no4top15pw2m6odd"
-                initialValue={initialValue}
+                
                 value={value}
                 onEditorChange={handleUpdate}
                 onBeforeAddUndo={handleBeforeAddUndo}

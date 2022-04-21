@@ -4,6 +4,8 @@ import { styled } from '@mui/material/styles';
 import contentPackApi from 'src/api/contentPackApi';
 import { AuthContext } from 'src/App';
 import { useNavigate } from 'react-router';
+import de from 'date-fns/esm/locale/de/index.js';
+import surveyApi from 'src/api/surveyApi';
 const BoxNav = styled(Box)({
   height: '65px',
   position: 'fixed',
@@ -38,13 +40,26 @@ function SubmitNav({
     switch (page) {
       case 'content-pack':
         deleteContentPack();
+        break;
+      case 'survey':
+        deleteSurvey();
+        break;
     }
   };
 
   const deleteContentPack = () => {
     contentPackApi.delete(idContentPack).then((res) => {
       handleOpenToast();
-      handleChangeMessageToast(res.data.success);
+      handleChangeMessageToast(res.data.message);
+      if (res.data.success) {
+        nav(`${process.env.REACT_APP_BASE_NAME}/${page}`);
+      }
+    });
+  };
+  const deleteSurvey = () => {
+    surveyApi.delete(idContentPack).then((res) => {
+      handleOpenToast();
+      handleChangeMessageToast(res.data.message);
       if (res.data.success) {
         nav(`${process.env.REACT_APP_BASE_NAME}/${page}`);
       }
