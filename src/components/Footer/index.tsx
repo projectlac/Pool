@@ -21,7 +21,7 @@ function Footer() {
         >
           <Box>
             <Typography variant="subtitle1">
-              &copy; 2021 - RP Admin Dashboard
+              &copy; 2021 - SG Pool Admin Dashboard
             </Typography>
           </Box>
         </Box>
