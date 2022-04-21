@@ -3,6 +3,7 @@ import { styled } from '@mui/material/styles';
 import { useState } from 'react';
 import UsePagination from 'src/components/Common/Pagination/UsePagination';
 import SelectBulkAction from 'src/components/Common/SelectWithoutLabel/SelectBulkAction';
+import DeleteSurvey from '../Dialog/DeleteSurvey';
 
 const ButtonApply = styled(Button)(
   ({ theme }) => `
@@ -38,9 +39,24 @@ function BulkActions({
     switch (url) {
       case 'content-pack':
         deleteContentPack();
+        break;
+      case 'survey':
+        deleteSurvey();
+        break;
+      case 'outlet/individual':
+        deleteIndividual();
+        break;
     }
   };
   const deleteContentPack = () => {
+    console.log(selectedCryptoOrders);
+  };
+
+  const deleteSurvey = () => {
+    console.log(selectedCryptoOrders);
+  };
+
+  const deleteIndividual = () => {
     console.log(selectedCryptoOrders);
   };
   return (

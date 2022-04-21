@@ -1,12 +1,12 @@
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
+import { ReactComponent as LeftArrow } from 'src/assets/images/svg/leftArrow.svg';
 import PageHeader from 'src/components/Header/PageHeader';
 import PageTitleWrapper from 'src/components/PageTitleWrapper';
-import { ReactComponent as LeftArrow } from 'src/assets/images/svg/leftArrow.svg';
-import Add from './Add';
-import { useParams } from 'react-router';
+import GetDataColumn from './getDataColumn';
 function AddNewGroup() {
   const [edit, setEdit] = useState<boolean>(false);
 
@@ -45,7 +45,7 @@ function AddNewGroup() {
           spacing={3}
         >
           <Grid item xs={12}>
-            <Add editMode={edit} editId={id} />
+            <GetDataColumn editMode={edit} editId={id} />
           </Grid>
         </Grid>
       </Container>

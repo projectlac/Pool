@@ -7,11 +7,14 @@ import {
   SelectChangeEvent,
   Typography
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
 import contentPackApi from 'src/api/contentPackApi';
+import groupApi from 'src/api/group';
 import outletApi from 'src/api/outletApi';
 import surveyApi from 'src/api/surveyApi';
+import { AuthContext } from 'src/App';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import DnD from 'src/components/Common/Dnd/DnD';
@@ -82,17 +85,6 @@ import { DataColumns, OutletElement, PropsEdit } from 'src/models';
 //   }
 // ];
 
-export const columnsFromBackend: DataColumns = {
-  '1': {
-    title: 'Tagged Outlet',
-    items: [] as OutletElement[]
-  },
-  '2': {
-    title: 'Available Outlet',
-    items: []
-  }
-};
-
 interface Respon {
   id: string;
   name: string;
@@ -102,8 +94,22 @@ interface ErrorType {
   errorContent: boolean;
 }
 
-function Add({ editId, editMode }: PropsEdit) {
-  const [columns, setColumns] = useState<DataColumns>(columnsFromBackend);
+interface GroupProp {
+  dataColumns: DataColumns;
+  editId: string;
+  editMode: boolean;
+  handleAfterDragParent: (data: DataColumns) => void;
+}
+
+function Add({
+  dataColumns,
+  handleAfterDragParent,
+  editId,
+  editMode
+}: GroupProp) {
+  // const [columns, setColumns] = useState<DataColumns>(data);
+  const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
+  const nav = useNavigate();
   const [content, setContent] = useState<string>('Select a Content Pack');
   const [survey, setSurvey] = useState<string>('Select a Survey');
 
@@ -117,6 +123,7 @@ function Add({ editId, editMode }: PropsEdit) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors }
   } = useForm({
     mode: 'onChange',
@@ -132,7 +139,8 @@ function Add({ editId, editMode }: PropsEdit) {
   };
 
   const handleAfterDrag = (data: DataColumns) => {
-    setColumns(data);
+    // setColumns(data);
+    handleAfterDragParent(data);
   };
 
   const onSubmit = (data) => {
@@ -151,15 +159,38 @@ function Add({ editId, editMode }: PropsEdit) {
         const formData = new FormData();
         formData.append('Name', data.groupName);
         formData.append('ContentPackId', content);
-        formData.append('SurveryId', content);
-        formData.append('NumberOfOutlet', columns['1'].items.length.toString());
-        // outletApi.add(formData).then((res) => {
-        //   handleChangeMessageToast(res.data.message);
-        //   handleOpenToast();
-        //   if (res.data.success) {
-        //     nav(`${process.env.REACT_APP_BASE_NAME}/outlet/individual/`);
-        //   }
-        // });
+        formData.append('SurveyId', survey);
+        formData.append(
+          'NumberOfOutlet',
+          dataColumns['1'].items.length.toString()
+        );
+        // console.log(dataColumns['1'].items);
+        let listOutlet = dataColumns['1'].items.map((d) => {
+          return d.id;
+        });
+        if (listOutlet.length > 0) {
+          listOutlet.forEach((d) => {
+            formData.append('LstOutletIds', d);
+          });
+        }
+        if (editId !== undefined) {
+          formData.append('id', editId);
+          groupApi.update(formData).then((res) => {
+            handleChangeMessageToast(res.data.message);
+            handleOpenToast();
+            if (res.data.success) {
+              nav(`${process.env.REACT_APP_BASE_NAME}/outlet/groups/`);
+            }
+          });
+        } else {
+          groupApi.add(formData).then((res) => {
+            handleChangeMessageToast(res.data.message);
+            handleOpenToast();
+            if (res.data.success) {
+              nav(`${process.env.REACT_APP_BASE_NAME}/outlet/groups/`);
+            }
+          });
+        }
       }
     }
   };
@@ -171,6 +202,17 @@ function Add({ editId, editMode }: PropsEdit) {
   useEffect(() => {
     if (editId) {
       try {
+        outletApi.getAllContentAndSurvey().then((res) => {
+          if (res.data.success) {
+            setContentList(res.data.data.contentPacks);
+            setSurveyList(res.data.data.surveys);
+          }
+        });
+        groupApi.getDataById(editId).then((res) => {
+          setContent(res.data.data.contentPackId);
+          setSurvey(res.data.data.surveyId);
+          setValue('groupName', res.data.data.name);
+        });
       } catch (error) {}
     } else {
       surveyApi.getData(99, 0).then((res) => {
@@ -190,22 +232,8 @@ function Add({ editId, editMode }: PropsEdit) {
           setContentList(temp);
         }
       });
-
-      outletApi.getData(99, 0).then((res) => {
-        if (res.data.success) {
-          let temp = res.data.data.map((d, index) => {
-            return { outletName: d.name, id: d.id };
-          });
-
-          setColumns({
-            ...columns,
-            '1': { title: 'Tagged Outlet', items: [] },
-            '2': { title: 'Available Outlet', items: temp }
-          });
-        }
-      });
     }
-  }, [editId]);
+  }, []);
   return (
     <Grid container>
       <Grid item md={12}>
@@ -239,7 +267,7 @@ function Add({ editId, editMode }: PropsEdit) {
             </Grid>
           </Box>
 
-          <DnD columns={columns} setColumns={handleAfterDrag} />
+          <DnD columns={dataColumns} setColumns={handleAfterDrag} />
 
           <Grid item xl={6}>
             <Box mt={2}>
@@ -380,6 +408,7 @@ function Add({ editId, editMode }: PropsEdit) {
           </Grid>
           <SubmitNav
             page={'group'}
+            idContentPack={editId}
             onSubmit={submitFromNav}
             editMode={editMode}
           />

@@ -21,9 +21,21 @@ import { Outlet } from 'src/models';
 interface RecentOrdersTableProps {
   className?: string;
   cryptoOrders: Outlet[];
+  handleSetPage: (page: number) => void;
+  handleSetIndex: (index: number) => void;
+  total: number;
+  index: number;
+  page: number;
 }
 
-const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
+const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
+  cryptoOrders,
+  handleSetPage,
+  handleSetIndex,
+  index,
+  page,
+  total
+}) => {
   const [selectedCryptoOrders, setSelectedCryptoOrders] = useState<string[]>(
     []
   );
@@ -63,7 +75,14 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
   return (
     <>
       <Box flex={1} pb={2}>
-        <BulkActions selectedCryptoOrders={selectedCryptoOrders} />
+        <BulkActions
+          url={'outlet/individual'}
+          selectedCryptoOrders={selectedCryptoOrders}
+          total={total}
+          handleSetIndex={handleSetIndex}
+          page={page}
+          index={index}
+        />
       </Box>
       <Card>
         <Divider />
@@ -210,7 +229,13 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
         </TableContainer>
       </Card>
       <Box pt={2}>
-        <Pagination />
+        <Pagination
+          page={page}
+          index={index}
+          total={total}
+          handleSetPage={handleSetPage}
+          handleSetIndex={handleSetIndex}
+        />
       </Box>
     </>
   );

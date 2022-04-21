@@ -69,7 +69,7 @@ function Add({ editId, editMode }: PropsEdit) {
         const formData = new FormData();
         formData.append('Name', data.outletName);
         formData.append('ContentPackId', content);
-        formData.append('SurveryId', survey);
+        formData.append('SurveyId', survey);
 
         outletApi.add(formData).then((res) => {
           handleChangeMessageToast(res.data.message);
@@ -95,23 +95,22 @@ function Add({ editId, editMode }: PropsEdit) {
   useEffect(() => {
     if (editId) {
       try {
+        outletApi.getAllContentAndSurvey().then((res) => {
+          if (res.data.success) {
+            setContentList(res.data.data.contentPacks);
+            setSurveyList(res.data.data.surveys);
+          }
+        });
+        outletApi.getDataById(editId).then((res) => {
+          setContent(res.data.data.contentPack.id);
+          // setSurvey()
+        });
       } catch (error) {}
     } else {
-      surveyApi.getData(99, 0).then((res) => {
+      outletApi.getAllContentAndSurvey().then((res) => {
         if (res.data.success) {
-          let temp = res.data.data.map((d, index) => {
-            return { name: d.name, id: d.id };
-          });
-          setSurveyList(temp);
-        }
-      });
-
-      contentPackApi.getData(99, 0).then((res) => {
-        if (res.data.success) {
-          let temp = res.data.data.map((d, index) => {
-            return { name: d.name, id: d.id };
-          });
-          setContentList(temp);
+          setContentList(res.data.data.contentPacks);
+          setSurveyList(res.data.data.surveys);
         }
       });
     }

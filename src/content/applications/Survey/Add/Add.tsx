@@ -10,7 +10,7 @@ import {
   Typography
 } from '@mui/material';
 import { format } from 'date-fns';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import surveyApi from 'src/api/surveyApi';
@@ -49,9 +49,11 @@ function Add({ editId, editMode }: PropsEdit) {
   };
   const handleChangeTimeFrom = (newValue: Date | null) => {
     setSurveyDurationFrom(newValue);
+    setValue('startTime', newValue);
   };
   const handleChangeTimeTo = (newValue: Date | null) => {
     setSurveyDurationTo(newValue);
+    setValue('endTime', newValue);
   };
   const {
     register,
@@ -59,6 +61,7 @@ function Add({ editId, editMode }: PropsEdit) {
     trigger,
     setValue,
     getValues,
+    watch,
     formState: { errors }
   } = useForm({
     mode: 'onChange',
@@ -149,15 +152,18 @@ function Add({ editId, editMode }: PropsEdit) {
                   `Questions[${index}].answers[${key}].answerStr`,
                   contentQuestion[index].answers[key].answerStr
                 );
-                formData.append(
-                  `Questions[${index}].answers[${key}].id`,
-                  contentQuestion[index].answers[key].id
-                );
+                if (contentQuestion[index].answers[key].id !== '') {
+                  formData.append(
+                    `Questions[${index}].answers[${key}].id`,
+                    contentQuestion[index].answers[key].id
+                  );
+                }
               }
             }
           );
         });
     });
+
     if (editId === undefined) {
       try {
         surveyApi.add(formData).then((res) => {
@@ -208,6 +214,10 @@ function Add({ editId, editMode }: PropsEdit) {
     setValue('bodyWelcome', '');
     setValue('bodyThankYou', '');
     setValue('bodyExpired', '');
+    register('startTime');
+    register('endTime');
+    setValue('startTime', new Date());
+    setValue('endTime', new Date());
   }, [register, trigger]);
 
   useEffect(() => {
@@ -227,15 +237,16 @@ function Add({ editId, editMode }: PropsEdit) {
           setSurveyDurationFrom(data.startSurveyDate);
           setSurveyDurationFrom(data.endSurveyDate);
           setNumberOfQuestions(data.numberOfQuestion);
-
+          setValue('startTime', data.startSurveyDate);
+          setValue('endTime', data.endSurveyDate);
           let tempContent = [];
-          {
-            data.questionResponse.length > 0 &&
-              data.questionResponse.forEach((d, i) => {
-                tempContent.push(d);
-              });
-          }
-          // console.log(data.questionResponse);
+
+          data.questionResponse.length > 0 &&
+            data.questionResponse.forEach((d, i) => {
+              tempContent.push(d);
+            });
+
+          // onsole.log(data.questionResponse);
 
           setContentQuestion(tempContent);
 
@@ -244,6 +255,12 @@ function Add({ editId, editMode }: PropsEdit) {
       });
     }
   }, [editId]);
+
+  const startTime = useRef({});
+  const endTime = useRef({});
+  startTime.current = watch('startTime', '');
+  endTime.current = watch('endTime', '');
+
   return (
     <Grid container>
       <Grid item md={12}>
@@ -348,6 +365,13 @@ function Add({ editId, editMode }: PropsEdit) {
                   onChange={handleChangeTimeTo}
                   renderInput={(params) => <TextField {...params} />}
                 />
+                {endTime.current < startTime.current && (
+                  <Box mt={1}>
+                    <span style={{ color: 'red' }}>
+                      The End Date must be equal or greater than Start Date
+                    </span>
+                  </Box>
+                )}
               </Box>
             </Grid>
           </Box>

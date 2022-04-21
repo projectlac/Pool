@@ -11,6 +11,11 @@ const outletApi = {
       `Outlets/list-Outlet?pageSize=${page}&pageIndex=${index}`
     );
   },
+  getAllContentAndSurvey(): Promise<PromiseApi> {
+    return axiosJsonClient.get(
+      `Outlets/get-all-content-pack-and-survey`
+    );
+  },
   getDataById(param: string): Promise<PromiseApi> {
     return axiosJsonClient.get(`Outlets/get-Outlet-by-id?OutletId=${param}`);
   },

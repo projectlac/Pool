@@ -6,6 +6,8 @@ import { AuthContext } from 'src/App';
 import { useNavigate } from 'react-router';
 import de from 'date-fns/esm/locale/de/index.js';
 import surveyApi from 'src/api/surveyApi';
+import groupApi from 'src/api/group';
+import outletApi from 'src/api/outletApi';
 const BoxNav = styled(Box)({
   height: '65px',
   position: 'fixed',
@@ -43,6 +45,12 @@ function SubmitNav({
       case 'survey':
         deleteSurvey();
         break;
+      case 'group':
+        deleteGroup();
+        break;
+      case 'outlet':
+        deleteOutlet();
+        break;
     }
   };
 
@@ -57,6 +65,25 @@ function SubmitNav({
   };
   const deleteSurvey = () => {
     surveyApi.delete(idContentPack).then((res) => {
+      handleOpenToast();
+      handleChangeMessageToast(res.data.message);
+      if (res.data.success) {
+        nav(`${process.env.REACT_APP_BASE_NAME}/${page}`);
+      }
+    });
+  };
+
+  const deleteGroup = () => {
+    groupApi.delete(idContentPack).then((res) => {
+      handleOpenToast();
+      handleChangeMessageToast(res.data.message);
+      if (res.data.success) {
+        nav(`${process.env.REACT_APP_BASE_NAME}/${page}`);
+      }
+    });
+  };
+  const deleteOutlet = () => {
+    outletApi.delete(idContentPack).then((res) => {
       handleOpenToast();
       handleChangeMessageToast(res.data.message);
       if (res.data.success) {
