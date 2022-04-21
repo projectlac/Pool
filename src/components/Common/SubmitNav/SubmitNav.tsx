@@ -19,10 +19,10 @@ const BoxNav = styled(Box)({
   padding: '0px 50px'
 });
 interface PropsSubmit {
-  onSubmit: () => void;
+  onSubmit: (status: string) => void;
   editMode: boolean;
   isShowDraftBtn?: boolean;
-  onDraft?: () => void;
+
   idContentPack?: string;
   page: string;
 }
@@ -30,7 +30,6 @@ function SubmitNav({
   onSubmit,
   idContentPack,
   page,
-  onDraft,
   editMode,
   isShowDraftBtn = false
 }: PropsSubmit) {
@@ -65,6 +64,7 @@ function SubmitNav({
       }
     });
   };
+
   return (
     <BoxNav>
       <Box>
@@ -76,8 +76,23 @@ function SubmitNav({
       </Box>
 
       <Box>
-        {isShowDraftBtn && <Button onClick={onDraft}>Save as draft</Button>}
-        <Button variant="contained" type="submit" onClick={onSubmit}>
+        {isShowDraftBtn && (
+          <Button
+            type="submit"
+            onClick={() => {
+              onSubmit('1');
+            }}
+          >
+            Save as draft
+          </Button>
+        )}
+        <Button
+          variant="contained"
+          type="submit"
+          onClick={() => {
+            onSubmit('2');
+          }}
+        >
           Save
         </Button>
       </Box>

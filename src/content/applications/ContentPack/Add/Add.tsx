@@ -42,7 +42,7 @@ function Add({ editId, editMode }: PropsEdit) {
     { id: '', fileName: '', file: undefined, duration: '10', seq: '5' }
   ]);
   const onSubmit = (data) => {
-    const { contentName, idContentPack } = data;
+    const { contentName } = data;
 
     // console.log(fileList, contentName, numberOfContent, status);
     const formData = new FormData();
@@ -57,7 +57,7 @@ function Add({ editId, editMode }: PropsEdit) {
     });
 
     try {
-      if (idContentPack === undefined) {
+      if (editId === undefined) {
         contentPackApi.add(formData).then((res) => {
           handleOpenToast();
           handleChangeMessageToast(res.data.message);
@@ -66,7 +66,7 @@ function Add({ editId, editMode }: PropsEdit) {
           }
         });
       } else {
-        formData.append('Id', idContentPack);
+        formData.append('Id', editId);
         contentPackApi.update(formData).then((res) => {
           handleOpenToast();
           handleChangeMessageToast(res.data.message);
@@ -208,7 +208,6 @@ function Add({ editId, editMode }: PropsEdit) {
             onSubmit={submitFromNav}
             editMode={editMode}
             isShowDraftBtn={true}
-            onDraft={submitAsDraft}
           />
         </Box>
       </Grid>

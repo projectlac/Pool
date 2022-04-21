@@ -52,9 +52,9 @@ export default function CustomizedTables({
   const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
 
   const [defautFileList, setDefautFileList] = React.useState<fileObject[]>([
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' }
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' },
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' },
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' }
   ]);
 
   React.useEffect(() => {
@@ -64,21 +64,31 @@ export default function CustomizedTables({
   const handleUpload = (e, index) => {
     const file = (e.target as HTMLInputElement).files[0];
     let tempData = [...defautFileList];
-    if (file.size <= 5 * 1204 * 1024) {
-      if (
-        file.type.toLocaleLowerCase().includes('jpg') ||
-        file.type.toLocaleLowerCase().includes('png') ||
-        file.type.toLocaleLowerCase().includes('jpeg')
-      ) {
+    if (
+      file.type.toLocaleLowerCase().includes('jpg') ||
+      file.type.toLocaleLowerCase().includes('png') ||
+      file.type.toLocaleLowerCase().includes('jpeg')
+    ) {
+      if (file.size <= 5 * 1204 * 1024) {
         tempData[index].file = file;
         setDefautFileList(tempData);
         handleUploadFile(tempData);
       } else {
-        handleChangeMessageToast('Incorrect format');
+        handleChangeMessageToast('This file too large');
         handleOpenToast();
       }
     } else {
-      handleChangeMessageToast('This file too large');
+      if (file.type.toLocaleLowerCase().includes('mp4')) {
+        if (file.size <= 2 * 1204 * 1024 * 1024) {
+          tempData[index].file = file;
+          setDefautFileList(tempData);
+          handleUploadFile(tempData);
+        } else {
+          handleChangeMessageToast('This file too large');
+          handleOpenToast();
+        }
+      }
+      handleChangeMessageToast('Incorrect format');
       handleOpenToast();
     }
   };
@@ -169,7 +179,7 @@ export default function CustomizedTables({
               </StyledTableCell>
               <StyledTableCell align="center">
                 <SelectDuration
-                  value={['10', '20', '30']}
+                  value={['5', '10', '15', '20', '15', '30']}
                   defaultValue={defautFileList[index].duration}
                   index={index}
                   title={'duration'}
@@ -178,7 +188,7 @@ export default function CustomizedTables({
               </StyledTableCell>
               <StyledTableCell align="center">
                 <SelectDuration
-                  value={['5', '20', '30']}
+                  value={['1', '2', '3']}
                   defaultValue={defautFileList[index].seq}
                   index={index}
                   handleTime={handleTime}

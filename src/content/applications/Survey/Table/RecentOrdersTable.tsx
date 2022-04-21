@@ -33,16 +33,20 @@ interface RecentOrdersTableProps {
 
 const getStatusLabel = (cryptoOrderStatus: SurveyStatus): JSX.Element => {
   const map = {
-    '0': {
+    '1': {
       text: 'Draft',
       color: '#FF1943'
     },
-    '1': {
+    '2': {
       text: 'Published',
       color: '#44D600'
     },
-    '2': {
-      text: 'Published',
+    '3': {
+      text: 'Ongoing',
+      color: '#44D600'
+    },
+    '4': {
+      text: 'Expired',
       color: '#44D600'
     }
   };

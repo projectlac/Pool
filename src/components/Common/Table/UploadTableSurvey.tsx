@@ -10,6 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import * as React from 'react';
+import { AuthContext } from 'src/App';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#ebebeb',
@@ -48,9 +49,44 @@ export default function UploadTableSurvey({
   fileName
 }: PropsTableUpload) {
   const [defautFileList, setDefautFileList] = React.useState<File>(undefined);
+
+  const { handleOpenToast, handleChangeMessageToast } =
+    React.useContext(AuthContext);
+
   const handleUpload = (e) => {
-    setDefautFileList((e.target as HTMLInputElement).files[0]);
-    handleUploadFile((e.target as HTMLInputElement).files[0], indexQuestion);
+    const file = (e.target as HTMLInputElement).files[0];
+
+    if (
+      file.type.toLocaleLowerCase().includes('jpg') ||
+      file.type.toLocaleLowerCase().includes('png') ||
+      file.type.toLocaleLowerCase().includes('jpeg')
+    ) {
+      if (file.size <= 5 * 1204 * 1024) {
+        setDefautFileList((e.target as HTMLInputElement).files[0]);
+        handleUploadFile(
+          (e.target as HTMLInputElement).files[0],
+          indexQuestion
+        );
+      } else {
+        handleChangeMessageToast('This file too large');
+        handleOpenToast();
+      }
+    } else {
+      if (file.type.toLocaleLowerCase().includes('mp4')) {
+        if (file.size <= 2 * 1204 * 1024 * 1024) {
+          setDefautFileList((e.target as HTMLInputElement).files[0]);
+          handleUploadFile(
+            (e.target as HTMLInputElement).files[0],
+            indexQuestion
+          );
+        } else {
+          handleChangeMessageToast('This file too large');
+          handleOpenToast();
+        }
+      }
+      handleChangeMessageToast('Incorrect format');
+      handleOpenToast();
+    }
   };
 
   return (
@@ -116,7 +152,7 @@ export default function UploadTableSurvey({
                         hidden
                         accept=".jpg, .png"
                         onChange={(e) => {
-                          handleUpload(handleUpload);
+                          handleUpload(e);
                         }}
                       />
                     </Box>

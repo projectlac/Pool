@@ -175,18 +175,10 @@ function Add({ editId, editMode }: PropsEdit) {
         handleOpenToast();
       }
     }
-    // console.log('contentQuestion', contentQuestion);
-    // console.log(data);
-    // console.log('from', surveyDurationFrom);
-    // console.log('to', surveyDurationTo);
   };
 
-  const submitAsDraft = () => {
-    setStatus('1');
-    handleSubmit(onSubmit);
-  };
-  const submitFromNav = () => {
-    setStatus('2');
+  const submitFromNav = (status: string) => {
+    setStatus(status);
     handleSubmit(onSubmit);
   };
 
@@ -437,6 +429,9 @@ function Add({ editId, editMode }: PropsEdit) {
                 >
                   <MenuItem value={'1'}>1</MenuItem>
                   <MenuItem value={'2'}>2</MenuItem>
+                  <MenuItem value={'3'}>3</MenuItem>
+                  <MenuItem value={'4'}>4</MenuItem>
+                  <MenuItem value={'5'}>5</MenuItem>
                 </Select>
               </Box>
 
@@ -554,7 +549,6 @@ function Add({ editId, editMode }: PropsEdit) {
           </Box>
           <SubmitNav
             idContentPack={editId}
-            onDraft={submitAsDraft}
             onSubmit={submitFromNav}
             editMode={editMode}
             isShowDraftBtn={true}

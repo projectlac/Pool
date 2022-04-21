@@ -127,6 +127,33 @@ export default function CustomizedAccordions({
       lstAnswers: ['', '', '', '', ''],
       file: undefined,
       numberOfAnswer: '2'
+    },
+
+    {
+      questionType: 'Optional',
+      typeOfQuestion: 'Image with caption',
+      questionCaption: '',
+      lstAnswers: ['', '', '', '', ''],
+      file: undefined,
+      numberOfAnswer: '2'
+    },
+
+    {
+      questionType: 'Optional',
+      typeOfQuestion: 'Image with caption',
+      questionCaption: '',
+      lstAnswers: ['', '', '', '', ''],
+      file: undefined,
+      numberOfAnswer: '2'
+    },
+
+    {
+      questionType: 'Optional',
+      typeOfQuestion: 'Image with caption',
+      questionCaption: '',
+      lstAnswers: ['', '', '', '', ''],
+      file: undefined,
+      numberOfAnswer: '2'
     }
   ]);
 
