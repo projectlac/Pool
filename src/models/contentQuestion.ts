@@ -4,7 +4,7 @@ export interface ContentQuestion {
   imageUploadUrl?: string;
   questionCaption: string;
   numberOfAnswer: string;
-  answers?: Answer[] | string[];
+  answers?: Answer[];
   lstAnswers?: string[];
   id?: string;
   surveyId?: string;

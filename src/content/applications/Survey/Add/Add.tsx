@@ -109,28 +109,53 @@ function Add({ editId, editMode }: PropsEdit) {
 
     formData.append('NumberOfQuestion', numberOfQuestions);
 
-    contentQuestion.forEach((d, i) => {
-      if (d.id !== undefined) {
-        formData.append(`Questions[${i}].id`, d.id);
+    [...Array(+numberOfQuestions)].forEach((d, i) => {
+      if (contentQuestion[i].id !== undefined) {
+        formData.append(`Questions[${i}].id`, contentQuestion[i].id);
+      }
+      if (contentQuestion[i].file !== undefined) {
+        formData.append(`Questions[${i}].image`, contentQuestion[i].file);
       }
 
-      formData.append(`Questions[${i}].questionType`, d.questionType);
-      formData.append(`Questions[${i}].typeOfQuestion`, d.typeOfQuestion);
-      formData.append(`Questions[${i}].questionCaption`, d.questionCaption);
-      formData.append(`Questions[${i}].numberOfAnswer`, d.numberOfAnswer);
+      if (contentQuestion[i].imageUploadUrl !== undefined) {
+        formData.append(
+          `Questions[${i}].imageUploadUrl`,
+          contentQuestion[i].imageUploadUrl
+        );
+      }
+      formData.append(
+        `Questions[${i}].questionType`,
+        contentQuestion[i].questionType
+      );
+      formData.append(
+        `Questions[${i}].typeOfQuestion`,
+        contentQuestion[i].typeOfQuestion
+      );
+      formData.append(
+        `Questions[${i}].questionCaption`,
+        contentQuestion[i].questionCaption
+      );
+      formData.append(
+        `Questions[${i}].numberOfAnswer`,
+        contentQuestion[i].numberOfAnswer
+      );
 
-      if (d.answers !== undefined)
-        [...Array(+numberOfQuestions)].forEach((ans, index) => {
-          if (editId === undefined) console.log(contentQuestion[index]);
-
-          contentQuestion[index].answers.forEach((getAnswer, key) => {
-            if (getAnswer.answerStr !== '') {
-              formData.append(
-                `Questions[${index}].answers[${key}].answerStr`,
-                getAnswer.answerStr
-              );
+      if (contentQuestion[i].answers !== undefined)
+        [...Array(+numberOfQuestions)].forEach((d, index) => {
+          [...Array(+contentQuestion[index].numberOfAnswer)].forEach(
+            (ans, key) => {
+              if (contentQuestion[index].answers[key].answerStr !== '') {
+                formData.append(
+                  `Questions[${index}].answers[${key}].answerStr`,
+                  contentQuestion[index].answers[key].answerStr
+                );
+                formData.append(
+                  `Questions[${index}].answers[${key}].id`,
+                  contentQuestion[index].answers[key].id
+                );
+              }
             }
-          });
+          );
         });
     });
     if (editId === undefined) {
@@ -149,19 +174,6 @@ function Add({ editId, editMode }: PropsEdit) {
     } else {
       formData.append(`Id`, editId);
 
-      [...Array(+numberOfQuestions)].forEach((d, index) => {
-        contentQuestion[index].answers.forEach((ans, key) => {
-          if (ans.answerStr) {
-            formData.append(
-              `Questions[${index}].answers[${key}].answerStr`,
-              ans.answerStr
-            );
-          }
-          if (ans.id) {
-            formData.append(`Questions[${index}].answers[${key}].id`, ans.id);
-          }
-        });
-      });
       try {
         surveyApi.update(formData).then((res) => {
           handleChangeMessageToast(res.data.message);

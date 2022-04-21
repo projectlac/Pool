@@ -69,7 +69,7 @@ function Add({ editId, editMode }: PropsEdit) {
         const formData = new FormData();
         formData.append('Name', data.outletName);
         formData.append('ContentPackId', content);
-        formData.append('SurveryId', content);
+        formData.append('SurveryId', survey);
 
         outletApi.add(formData).then((res) => {
           handleChangeMessageToast(res.data.message);

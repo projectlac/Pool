@@ -225,8 +225,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                         gutterBottom
                         noWrap
                       >
-                        {cryptoOrder.updatedDate.split('T')[0]}/
-                        {cryptoOrder.updatedDate.split('T')[1]}
+                        {cryptoOrder.updatedDate}
                       </Typography>
                     </TableCell>
 

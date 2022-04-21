@@ -37,9 +37,9 @@ function Add({ editId, editMode }: PropsEdit) {
     formState: { errors }
   } = useForm();
   const [fileList, setFileList] = useState<fileObject[]>([
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' },
-    { id: '', fileName: '', file: undefined, duration: '10', seq: '5' }
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' },
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' },
+    { id: '', fileName: '', file: undefined, duration: '5', seq: '1' }
   ]);
   const onSubmit = (data) => {
     const { contentName } = data;
@@ -50,10 +50,27 @@ function Add({ editId, editMode }: PropsEdit) {
     formData.append('Name', contentName);
     formData.append('NumberOfContent', numberOfContent);
     formData.append('ContentPackStatus', status);
-    fileList.forEach((d, index) => {
-      formData.append(`ContentUploads[${index}].FileUpload`, d.file);
-      formData.append(`ContentUploads[${index}].Duration`, d.duration);
-      formData.append(`ContentUploads[${index}].Seq`, d.seq);
+
+    [...Array(+numberOfContent)].forEach((d, index) => {
+      if (fileList[index].file !== undefined) {
+        formData.append(
+          `ContentUploads[${index}].FileUpload`,
+          fileList[index].file
+        );
+      }
+      formData.append(
+        `ContentUploads[${index}].Duration`,
+        fileList[index].duration
+      );
+      formData.append(`ContentUploads[${index}].Seq`, fileList[index].seq);
+
+      if (fileList[index].id !== '') {
+        formData.append(`ContentUploads[${index}].Id`, fileList[index].id);
+        formData.append(
+          `ContentUploads[${index}].FileName`,
+          fileList[index].fileName
+        );
+      }
     });
 
     try {

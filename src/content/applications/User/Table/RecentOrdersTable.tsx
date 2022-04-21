@@ -180,7 +180,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                         gutterBottom
                         noWrap
                       >
-                        {getTime(cryptoOrder.createdDate)}
+                        {cryptoOrder.createdDate}
                       </Typography>
                     </TableCell>
                   </TableRow>

@@ -14,6 +14,7 @@ import SelectDuration from '../SelectWithoutLabel/SelectDuration';
 import { fileObject } from 'src/models/fileObject';
 import { AuthContext } from 'src/App';
 import { useContext } from 'react';
+import te from 'date-fns/esm/locale/te/index.js';
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: '#ebebeb',
@@ -58,7 +59,12 @@ export default function CustomizedTables({
   ]);
 
   React.useEffect(() => {
-    setDefautFileList(fileList);
+    let temp = [...defautFileList];
+    fileList.forEach((d, index) => {
+      temp[index] = d;
+    });
+    setDefautFileList(temp);
+    console.log(temp);
   }, [fileList]);
 
   const handleUpload = (e, index) => {

@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import contentPackApi from 'src/api/contentPackApi';
+import outletApi from 'src/api/outletApi';
 import surveyApi from 'src/api/surveyApi';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
@@ -18,68 +19,68 @@ import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import { DataColumns, OutletElement, PropsEdit } from 'src/models';
 
-export const data: OutletElement[] = [
-  {
-    id: '1',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '2',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '3',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '4',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '5',
-    OutletName: 'Call with Backend Team'
-  },
-  {
-    id: '6',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '7',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '8',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '9',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '10',
-    OutletName: 'Call with Backend Team'
-  },
-  {
-    id: '11',
-    OutletName: 'Create PR for the Task'
-  },
-  {
-    id: '12',
-    OutletName: 'Fix Styling'
-  },
-  {
-    id: '13',
-    OutletName: 'Handle Api Changes'
-  },
-  {
-    id: '14',
-    OutletName: 'Blog on new features'
-  },
-  {
-    id: '15',
-    OutletName: 'Call with Backend Team'
-  }
-];
+// export const data: OutletElement[] = [
+//   {
+//     id: '1',
+//     OutletName: 'Create PR for the Task'
+//   },
+//   {
+//     id: '2',
+//     OutletName: 'Fix Styling'
+//   },
+//   {
+//     id: '3',
+//     OutletName: 'Handle Api Changes'
+//   },
+//   {
+//     id: '4',
+//     OutletName: 'Blog on new features'
+//   },
+//   {
+//     id: '5',
+//     OutletName: 'Call with Backend Team'
+//   },
+//   {
+//     id: '6',
+//     OutletName: 'Create PR for the Task'
+//   },
+//   {
+//     id: '7',
+//     OutletName: 'Fix Styling'
+//   },
+//   {
+//     id: '8',
+//     OutletName: 'Handle Api Changes'
+//   },
+//   {
+//     id: '9',
+//     OutletName: 'Blog on new features'
+//   },
+//   {
+//     id: '10',
+//     OutletName: 'Call with Backend Team'
+//   },
+//   {
+//     id: '11',
+//     OutletName: 'Create PR for the Task'
+//   },
+//   {
+//     id: '12',
+//     OutletName: 'Fix Styling'
+//   },
+//   {
+//     id: '13',
+//     OutletName: 'Handle Api Changes'
+//   },
+//   {
+//     id: '14',
+//     OutletName: 'Blog on new features'
+//   },
+//   {
+//     id: '15',
+//     OutletName: 'Call with Backend Team'
+//   }
+// ];
 
 export const columnsFromBackend: DataColumns = {
   '1': {
@@ -88,7 +89,7 @@ export const columnsFromBackend: DataColumns = {
   },
   '2': {
     title: 'Available Outlet',
-    items: data
+    items: []
   }
 };
 
@@ -102,7 +103,7 @@ interface ErrorType {
 }
 
 function Add({ editId, editMode }: PropsEdit) {
-  const [columns, setColumns] = useState(columnsFromBackend);
+  const [columns, setColumns] = useState<DataColumns>(columnsFromBackend);
   const [content, setContent] = useState<string>('Select a Content Pack');
   const [survey, setSurvey] = useState<string>('Select a Survey');
 
@@ -187,6 +188,20 @@ function Add({ editId, editMode }: PropsEdit) {
             return { name: d.name, id: d.id };
           });
           setContentList(temp);
+        }
+      });
+
+      outletApi.getData(99, 0).then((res) => {
+        if (res.data.success) {
+          let temp = res.data.data.map((d, index) => {
+            return { outletName: d.name, id: d.id };
+          });
+
+          setColumns({
+            ...columns,
+            '1': { title: 'Tagged Outlet', items: [] },
+            '2': { title: 'Available Outlet', items: temp }
+          });
         }
       });
     }
