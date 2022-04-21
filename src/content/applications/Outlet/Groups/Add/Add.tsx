@@ -7,8 +7,10 @@ import {
   SelectChangeEvent,
   Typography
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import contentPackApi from 'src/api/contentPackApi';
+import surveyApi from 'src/api/surveyApi';
 import BootstrapInput from 'src/components/Common/BootstrapInput/BootstrapInput';
 import LabelInput from 'src/components/Common/BootstrapInput/LabelInput';
 import DnD from 'src/components/Common/Dnd/DnD';
@@ -90,10 +92,27 @@ export const columnsFromBackend: DataColumns = {
   }
 };
 
+interface Respon {
+  id: string;
+  name: string;
+}
+interface ErrorType {
+  errorSurvey: boolean;
+  errorContent: boolean;
+}
+
 function Add({ editId, editMode }: PropsEdit) {
   const [columns, setColumns] = useState(columnsFromBackend);
   const [content, setContent] = useState<string>('Select a Content Pack');
   const [survey, setSurvey] = useState<string>('Select a Survey');
+
+  const [contentList, setContentList] = useState<Respon[]>();
+  const [surveyList, setSurveyList] = useState<Respon[]>();
+
+  const [error, setError] = useState<ErrorType>({
+    errorSurvey: false,
+    errorContent: false
+  });
   const {
     register,
     handleSubmit,
@@ -114,14 +133,64 @@ function Add({ editId, editMode }: PropsEdit) {
   const handleAfterDrag = (data: DataColumns) => {
     setColumns(data);
   };
+
   const onSubmit = (data) => {
-    console.log(columns);
+    if (survey === 'Select a Content Pack') {
+      setError({ ...error, errorSurvey: true });
+      setTimeout(() => {
+        setError({ ...error, errorSurvey: false });
+      }, 3000);
+    } else {
+      if (content === 'Select a Survey') {
+        setError({ ...error, errorContent: true });
+        setTimeout(() => {
+          setError({ ...error, errorContent: false });
+        }, 3000);
+      } else {
+        const formData = new FormData();
+        formData.append('Name', data.groupName);
+        formData.append('ContentPackId', content);
+        formData.append('SurveryId', content);
+        formData.append('NumberOfOutlet', columns['1'].items.length.toString());
+        // outletApi.add(formData).then((res) => {
+        //   handleChangeMessageToast(res.data.message);
+        //   handleOpenToast();
+        //   if (res.data.success) {
+        //     nav(`${process.env.REACT_APP_BASE_NAME}/outlet/individual/`);
+        //   }
+        // });
+      }
+    }
   };
 
   const submitFromNav = () => {
     handleSubmit(onSubmit);
   };
 
+  useEffect(() => {
+    if (editId) {
+      try {
+      } catch (error) {}
+    } else {
+      surveyApi.getData(99, 0).then((res) => {
+        if (res.data.success) {
+          let temp = res.data.data.map((d, index) => {
+            return { name: d.name, id: d.id };
+          });
+          setSurveyList(temp);
+        }
+      });
+
+      contentPackApi.getData(99, 0).then((res) => {
+        if (res.data.success) {
+          let temp = res.data.data.map((d, index) => {
+            return { name: d.name, id: d.id };
+          });
+          setContentList(temp);
+        }
+      });
+    }
+  }, [editId]);
   return (
     <Grid container>
       <Grid item md={12}>
@@ -132,7 +201,7 @@ function Add({ editId, editMode }: PropsEdit) {
                 <FormControl variant="standard" sx={{ width: '100%' }}>
                   <LabelInput shrink htmlFor="bootstrap-input">
                     Group Name
-                    {errors.surveyName && (
+                    {errors.groupName && (
                       <ErrorTitle>*This field is require</ErrorTitle>
                     )}
                   </LabelInput>
@@ -144,11 +213,11 @@ function Add({ editId, editMode }: PropsEdit) {
                         height: '35px'
                       }
                     }}
-                    error={errors.surveyName ? true : false}
+                    error={errors.groupName ? true : false}
                     defaultValue=""
                     placeholder="Default input"
                     id="bootstrap-input"
-                    {...register('surveyName', { required: true })}
+                    {...register('groupName', { required: true })}
                   />
                 </FormControl>
               </Box>
@@ -177,6 +246,17 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                 >
                   (Individual assignation will be overwritten)
+                  {error.errorContent && (
+                    <span
+                      style={{
+                        color: '#d33',
+                        fontSize: '15px',
+                        marginLeft: '15px'
+                      }}
+                    >
+                      *This field is require
+                    </span>
+                  )}
                 </span>
               </Typography>
               <FormControl sx={{ minWidth: '100%' }}>
@@ -205,8 +285,13 @@ function Add({ editId, editMode }: PropsEdit) {
                   <MenuItem value={'Select a Content Pack'}>
                     Select a Content Pack
                   </MenuItem>
-                  <MenuItem value={'10'}>10</MenuItem>
-                  <MenuItem value={'20'}>20</MenuItem>
+                  {contentList !== undefined &&
+                    contentList.length > 0 &&
+                    contentList.map((d) => (
+                      <MenuItem key={d.id} value={d.id}>
+                        {d.name}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Box>
@@ -229,6 +314,17 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                 >
                   (Individual assignation will be overwritten)
+                  {error.errorSurvey && (
+                    <span
+                      style={{
+                        color: '#d33',
+                        fontSize: '15px',
+                        marginLeft: '15px'
+                      }}
+                    >
+                      *This field is require
+                    </span>
+                  )}
                 </span>
               </Typography>
               <FormControl sx={{ minWidth: '100%' }}>
@@ -256,8 +352,13 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                 >
                   <MenuItem value={'Select a Survey'}>Select a Survey</MenuItem>
-                  <MenuItem value={'10'}>10</MenuItem>
-                  <MenuItem value={'20'}>20</MenuItem>
+                  {surveyList !== undefined &&
+                    surveyList.length > 0 &&
+                    surveyList.map((d) => (
+                      <MenuItem key={d.id} value={d.id}>
+                        {d.name}
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </Box>

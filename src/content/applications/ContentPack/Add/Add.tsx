@@ -78,13 +78,8 @@ function Add({ editId, editMode }: PropsEdit) {
     } catch (error) {}
   };
 
-  const submitAsDraft = async () => {
-    setStatus('1');
-    handleSubmit(onSubmit);
-  };
-
-  const submitFromNav = async () => {
-    setStatus('2');
+  const submitFromNav = async (status: string) => {
+    setStatus(status);
     handleSubmit(onSubmit);
   };
   const handleUploadFile = (file: fileObject[]) => {
