@@ -24,10 +24,9 @@ function Add({ editId, editMode }: PropsEdit) {
   const nav = useNavigate();
   const [role, setRole] = React.useState<string>('Admin');
   const onSubmit = (data) => {
-    const { userName, password, email, confirmPassword } = data;
+    const { password, email, confirmPassword } = data;
     try {
       const params = {
-        userName,
         password,
         email,
         confirmPassword,
@@ -56,7 +55,6 @@ function Add({ editId, editMode }: PropsEdit) {
           const result = res.data;
           if (result && result.success) {
             setRole(result.data.role);
-            setValue('userName', result.data.userName);
             setValue('email', result.data.email);
           }
         });
@@ -71,32 +69,6 @@ function Add({ editId, editMode }: PropsEdit) {
       <Grid item md={12}>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Grid item md={6}>
-            <Box mt={2}>
-              <FormControl variant="standard" sx={{ width: '100%' }}>
-                <LabelInput shrink htmlFor="bootstrap-input">
-                  User Name
-                  {errors.userName && (
-                    <ErrorTitle>{errors.userName.message}</ErrorTitle>
-                  )}
-                </LabelInput>
-                <BootstrapInput
-                  sx={{
-                    '& .MuiInputBase-input': {
-                      border: '1px solid #ddd',
-                      background: '#fff',
-                      height: '35px'
-                    }
-                  }}
-                  error={errors.userName ? true : false}
-                  defaultValue=""
-                  placeholder="User Name"
-                  id="bootstrap-input"
-                  {...register('userName', {
-                    required: '* This field is require'
-                  })}
-                />
-              </FormControl>
-            </Box>
             <Box mt={2}>
               <FormControl variant="standard" sx={{ width: '100%' }}>
                 <LabelInput shrink htmlFor="bootstrap-input">
@@ -116,6 +88,7 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                   error={errors.email ? true : false}
                   defaultValue=""
+                  disabled={!editId ? true : false}
                   type="email"
                   placeholder="Email"
                   id="bootstrap-input"

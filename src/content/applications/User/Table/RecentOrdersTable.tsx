@@ -98,8 +98,9 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                     onChange={handleSelectAllCryptoOrders}
                   />
                 </TableCell>
-                <TableCell width={'60%'}>User Name</TableCell>
+                <TableCell width={'50%'}>Email</TableCell>
                 <TableCell>Role</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Created On</TableCell>
               </TableRow>
             </TableHead>
@@ -157,7 +158,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                           noWrap
                           sx={{ display: 'flex', alignItems: 'center' }}
                         >
-                          {cryptoOrder.userName}{' '}
+                          {cryptoOrder.email}{' '}
                         </Typography>
                       </Link>
                     </TableCell>
@@ -170,6 +171,17 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({ cryptoOrders }) => {
                         noWrap
                       >
                         {cryptoOrder.role}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        color="text.primary"
+                        gutterBottom
+                        noWrap
+                      >
+                        {cryptoOrder.status}
                       </Typography>
                     </TableCell>
                     <TableCell>
