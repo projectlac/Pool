@@ -35,25 +35,33 @@ const getStatusLabel = (cryptoOrderStatus: SurveyStatus): JSX.Element => {
   const map = {
     '1': {
       text: 'Draft',
-      color: '#FF1943'
+      color: '#FF1943',
+      style: 'normal'
     },
     '2': {
       text: 'Published',
-      color: '#44D600'
+      color: '#44D600',
+      style: 'normal'
     },
     '3': {
       text: 'Ongoing',
-      color: '#44D600'
+      color: '#44D600',
+      style: 'normal'
     },
     '4': {
       text: 'Expired',
-      color: '#44D600'
+      color: '#666',
+      style: 'italic'
     }
   };
 
-  const { text, color }: any = map[cryptoOrderStatus];
+  const { text, color, style }: any = map[cryptoOrderStatus];
 
-  return <Typography color={color}>{text}</Typography>;
+  return (
+    <Typography color={color} fontStyle={style}>
+      {text}
+    </Typography>
+  );
 };
 
 const RecentOrdersTable: FC<RecentOrdersTableProps> = ({

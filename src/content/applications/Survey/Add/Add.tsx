@@ -22,20 +22,22 @@ import ErrorTitle from 'src/components/Common/ErrorTitle/ErrorTitle';
 import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import TinyEditor from 'src/components/TinyEditor/TinyEditor';
 import { Answer, ContentQuestion, PropsEdit } from 'src/models';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Add({ editId, editMode }: PropsEdit) {
   const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
   const [status, setStatus] = useState<string>('1');
   const [numberOfQuestions, setNumberOfQuestions] = useState<string>('1');
-  const [idContentPack, setIdContentPack] = useState<string>(undefined);
+
   const [surveyDurationFrom, setSurveyDurationFrom] =
     React.useState<Date | null>(new Date());
   const [surveyDurationTo, setSurveyDurationTo] = React.useState<Date | null>(
     new Date()
   );
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [complete, setComplete] = useState<boolean>(false);
-  const [answer, getAnswer] = useState<Answer[]>([]);
+
   const [contentQuestion, setContentQuestion] = React.useState<
     ContentQuestion[]
   >([]);
@@ -222,6 +224,7 @@ function Add({ editId, editMode }: PropsEdit) {
 
   useEffect(() => {
     if (editId) {
+      setLoading(true);
       surveyApi.getDataById(editId).then((res) => {
         if (res.data.success) {
           let data = res.data.data;
@@ -251,6 +254,7 @@ function Add({ editId, editMode }: PropsEdit) {
           setContentQuestion(tempContent);
 
           setComplete(true);
+          setLoading(false);
         }
       });
     }
@@ -264,147 +268,177 @@ function Add({ editId, editMode }: PropsEdit) {
   return (
     <Grid container>
       <Grid item md={12}>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <Box sx={{ display: 'flex' }}>
-            <Grid item md={6}>
-              <FormControl variant="standard" sx={{ width: '100%' }}>
-                <LabelInput shrink htmlFor="bootstrap-input">
-                  Survey Name{' '}
-                  {errors.surveyName && (
-                    <ErrorTitle>*This field is require</ErrorTitle>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+            <Box sx={{ display: 'flex' }}>
+              <Grid item md={6}>
+                <FormControl variant="standard" sx={{ width: '100%' }}>
+                  <LabelInput shrink htmlFor="bootstrap-input">
+                    Survey Name{' '}
+                    {errors.surveyName && (
+                      <ErrorTitle>*This field is require</ErrorTitle>
+                    )}
+                  </LabelInput>
+                  <BootstrapInput
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        border: '1px solid #ddd',
+                        background: '#fff',
+                        height: '35px'
+                      }
+                    }}
+                    error={errors.surveyName ? true : false}
+                    defaultValue=""
+                    placeholder="Default input"
+                    id="bootstrap-input"
+                    {...register('surveyName', { required: true })}
+                  />
+                </FormControl>
+                <Box sx={{ mt: 3 }}>
+                  <Typography
+                    sx={{
+                      fontSize: '17px',
+                      fontWeight: 'bold',
+                      color: '#044b7e',
+                      mb: 1
+                    }}
+                  >
+                    Description
+                  </Typography>
+                  <TextField
+                    sx={{
+                      width: '100%',
+                      background: '#fff'
+                    }}
+                    multiline
+                    rows={4}
+                    {...register('surveyDescription')}
+                  />
+                </Box>
+              </Grid>
+              <Grid item md={6}>
+                <Box
+                  sx={{
+                    background: '#f4f4f4',
+                    width: '93%',
+                    height: '100%',
+                    padding: ' 25px 50px',
+                    marginLeft: '50px',
+                    borderRadius: '10px',
+                    '& .MuiTextField-root': {
+                      width: '75%'
+                    },
+                    '& >div > div': {
+                      flexDirection: 'row-reverse',
+                      background: '#fff',
+                      width: '100%',
+                      '& input': {
+                        textDecoration: 'underline'
+                      }
+                    }
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '17px',
+                      fontWeight: 'bold',
+                      color: '#044b7e',
+                      mb: 1
+                    }}
+                  >
+                    Survey Duration
+                  </Typography>
+                  <DesktopDatePicker
+                    inputFormat="MM/dd/yyyy"
+                    value={surveyDurationFrom}
+                    onChange={handleChangeTimeFrom}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                  <Typography
+                    sx={{
+                      fontSize: '18px',
+                      fontWeight: 'normal',
+                      color: '#a1a1a1',
+                      my: 2
+                    }}
+                  >
+                    to
+                  </Typography>
+                  <DesktopDatePicker
+                    inputFormat="MM/dd/yyyy"
+                    value={surveyDurationTo}
+                    onChange={handleChangeTimeTo}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                  {endTime.current < startTime.current && (
+                    <Box mt={1}>
+                      <span style={{ color: 'red' }}>
+                        The End Date must be equal or greater than Start Date
+                      </span>
+                    </Box>
                   )}
-                </LabelInput>
-                <BootstrapInput
-                  sx={{
-                    '& .MuiInputBase-input': {
-                      border: '1px solid #ddd',
-                      background: '#fff',
-                      height: '35px'
-                    }
-                  }}
-                  error={errors.surveyName ? true : false}
-                  defaultValue=""
-                  placeholder="Default input"
-                  id="bootstrap-input"
-                  {...register('surveyName', { required: true })}
-                />
-              </FormControl>
-              <Box sx={{ mt: 3 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 'bold',
-                    color: '#044b7e',
-                    mb: 1
-                  }}
-                >
-                  Description
-                </Typography>
-                <TextField
-                  sx={{
-                    width: '100%',
-                    background: '#fff'
-                  }}
-                  multiline
-                  rows={4}
-                  {...register('surveyDescription')}
-                />
-              </Box>
-            </Grid>
-            <Grid item md={6}>
-              <Box
-                sx={{
-                  background: '#f4f4f4',
-                  width: '93%',
-                  height: '100%',
-                  padding: ' 25px 50px',
-                  marginLeft: '50px',
-                  borderRadius: '10px',
-                  '& .MuiTextField-root': {
-                    width: '75%'
-                  },
-                  '& >div > div': {
-                    flexDirection: 'row-reverse',
-                    background: '#fff',
-                    width: '100%',
-                    '& input': {
-                      textDecoration: 'underline'
-                    }
-                  }
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 'bold',
-                    color: '#044b7e',
-                    mb: 1
-                  }}
-                >
-                  Survey Duration
-                </Typography>
-                <DesktopDatePicker
-                  inputFormat="MM/dd/yyyy"
-                  value={surveyDurationFrom}
-                  onChange={handleChangeTimeFrom}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-                <Typography
-                  sx={{
-                    fontSize: '18px',
-                    fontWeight: 'normal',
-                    color: '#a1a1a1',
-                    my: 2
-                  }}
-                >
-                  to
-                </Typography>
-                <DesktopDatePicker
-                  inputFormat="MM/dd/yyyy"
-                  value={surveyDurationTo}
-                  onChange={handleChangeTimeTo}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-                {endTime.current < startTime.current && (
-                  <Box mt={1}>
-                    <span style={{ color: 'red' }}>
-                      The End Date must be equal or greater than Start Date
-                    </span>
-                  </Box>
-                )}
-              </Box>
-            </Grid>
-          </Box>
-          <Box mt={8} mb={9}>
-            <Grid item md={6}>
-              <Typography variant="h3">PART I: WELCOME</Typography>
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
-                  <LabelInput shrink htmlFor="bootstrap-input">
-                    Header{' '}
-                    {errors.headerWelcome && (
-                      <ErrorTitle>*This field is require</ErrorTitle>
-                    )}
-                  </LabelInput>
-                  <BootstrapInput
-                    sx={{
-                      '& .MuiInputBase-input': {
-                        border: '1px solid #ddd',
-                        background: '#fff',
-                        height: '35px'
-                      }
-                    }}
-                    error={errors.headerWelcome ? true : false}
-                    defaultValue=""
-                    placeholder="Default input"
-                    id="bootstrap-input"
-                    {...register('headerWelcome', { required: true })}
-                  />
-                </FormControl>
-              </Box>
+                </Box>
+              </Grid>
+            </Box>
+            <Box mt={8} mb={9}>
+              <Grid item md={6}>
+                <Typography variant="h3">PART I: WELCOME</Typography>
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <LabelInput shrink htmlFor="bootstrap-input">
+                      Header{' '}
+                      {errors.headerWelcome && (
+                        <ErrorTitle>*This field is require</ErrorTitle>
+                      )}
+                    </LabelInput>
+                    <BootstrapInput
+                      sx={{
+                        '& .MuiInputBase-input': {
+                          border: '1px solid #ddd',
+                          background: '#fff',
+                          height: '35px'
+                        }
+                      }}
+                      error={errors.headerWelcome ? true : false}
+                      defaultValue=""
+                      placeholder="Default input"
+                      id="bootstrap-input"
+                      {...register('headerWelcome', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
 
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '17px',
+                        fontWeight: 'bold',
+                        color: '#044b7e',
+                        mb: 1
+                      }}
+                    >
+                      Body Text
+                    </Typography>
+                    <TinyEditor
+                      initialValue={getValues('bodyWelcome') as string}
+                      limit={9999999999}
+                      handleGetDataFromEditor={handleGetDataFromEditor}
+                      title={'bodyWelcome'}
+                    />
+                  </FormControl>
+                </Box>
+              </Grid>
+            </Box>
+
+            <Box mt={8} mb={9}>
+              <Grid item md={12}>
+                <Typography variant="h3">PART II: CONTENT</Typography>
+                <Box sx={{ mt: 3 }}>
                   <Typography
                     sx={{
                       fontSize: '17px',
@@ -413,184 +447,160 @@ function Add({ editId, editMode }: PropsEdit) {
                       mb: 1
                     }}
                   >
-                    Body Text
+                    Number of Question(s)
                   </Typography>
-                  <TinyEditor
-                    initialValue={getValues('bodyWelcome') as string}
-                    limit={9999999999}
-                    handleGetDataFromEditor={handleGetDataFromEditor}
-                    title={'bodyWelcome'}
-                  />
-                </FormControl>
-              </Box>
-            </Grid>
-          </Box>
-
-          <Box mt={8} mb={9}>
-            <Grid item md={12}>
-              <Typography variant="h3">PART II: CONTENT</Typography>
-              <Box sx={{ mt: 3 }}>
-                <Typography
-                  sx={{
-                    fontSize: '17px',
-                    fontWeight: 'bold',
-                    color: '#044b7e',
-                    mb: 1
-                  }}
-                >
-                  Number of Question(s)
-                </Typography>
-                <Select
-                  value={numberOfQuestions}
-                  onChange={handleChange}
-                  inputProps={{ 'aria-label': 'Without label' }}
-                  sx={{
-                    minWidth: 75,
-                    '& .MuiOutlinedInput-input': {
-                      background: '#fff',
-                      padding: '13px',
-                      color: '#000',
-
-                      fontSize: '16px',
-                      alignItems: 'center',
-                      display: 'flex'
-                    },
-                    '& fieldset': {
-                      borderColor: '#ddd'
-                    },
-                    '& .MuiSelect-icon': {
-                      color: '#044b7e'
-                    }
-                  }}
-                >
-                  <MenuItem value={'1'}>1</MenuItem>
-                  <MenuItem value={'2'}>2</MenuItem>
-                  <MenuItem value={'3'}>3</MenuItem>
-                  <MenuItem value={'4'}>4</MenuItem>
-                  <MenuItem value={'5'}>5</MenuItem>
-                </Select>
-              </Box>
-
-              <Box sx={{ mt: 3 }}>
-                <CustomizedAccordions
-                  complete={complete}
-                  numberOfQuestions={+numberOfQuestions}
-                  contentQuestionList={contentQuestion}
-                  handleSetContentQuestion={handleSetContentQuestion}
-                />
-              </Box>
-            </Grid>
-          </Box>
-
-          <Box mt={8} mb={9}>
-            <Grid item md={6}>
-              <Typography variant="h3">PART III: THANK YOU</Typography>
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
-                  <LabelInput shrink htmlFor="bootstrap-input">
-                    Header
-                    {errors.headerThankYou && (
-                      <ErrorTitle>*This field is require</ErrorTitle>
-                    )}
-                  </LabelInput>
-                  <BootstrapInput
+                  <Select
+                    value={numberOfQuestions}
+                    onChange={handleChange}
+                    inputProps={{ 'aria-label': 'Without label' }}
                     sx={{
-                      '& .MuiInputBase-input': {
-                        border: '1px solid #ddd',
+                      minWidth: 75,
+                      '& .MuiOutlinedInput-input': {
                         background: '#fff',
-                        height: '35px'
+                        padding: '13px',
+                        color: '#000',
+
+                        fontSize: '16px',
+                        alignItems: 'center',
+                        display: 'flex'
+                      },
+                      '& fieldset': {
+                        borderColor: '#ddd'
+                      },
+                      '& .MuiSelect-icon': {
+                        color: '#044b7e'
                       }
                     }}
-                    error={errors.headerThankYou ? true : false}
-                    defaultValue=""
-                    placeholder="Default input"
-                    id="bootstrap-input"
-                    {...register('headerThankYou', { required: true })}
-                  />
-                </FormControl>
-              </Box>
-
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
-                  <Typography
-                    sx={{
-                      fontSize: '17px',
-                      fontWeight: 'bold',
-                      color: '#044b7e',
-                      mb: 1
-                    }}
                   >
-                    Body Text
-                  </Typography>
-                  <TinyEditor
-                    initialValue={getValues('bodyThankYou') as string}
-                    limit={9999999999}
-                    title={'bodyThankYou'}
-                    handleGetDataFromEditor={handleGetDataFromEditor}
-                  />
-                </FormControl>
-              </Box>
-            </Grid>
-          </Box>
+                    <MenuItem value={'1'}>1</MenuItem>
+                    <MenuItem value={'2'}>2</MenuItem>
+                    <MenuItem value={'3'}>3</MenuItem>
+                    <MenuItem value={'4'}>4</MenuItem>
+                    <MenuItem value={'5'}>5</MenuItem>
+                  </Select>
+                </Box>
 
-          <Box mt={8} mb={9}>
-            <Grid item md={6}>
-              <Typography variant="h3">PART IV: EXPIRED</Typography>
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
-                  <LabelInput shrink htmlFor="bootstrap-input">
-                    Header
-                    {errors.headerExpired && (
-                      <ErrorTitle>*This field is require</ErrorTitle>
-                    )}
-                  </LabelInput>
-                  <BootstrapInput
-                    sx={{
-                      '& .MuiInputBase-input': {
-                        border: '1px solid #ddd',
-                        background: '#fff',
-                        height: '35px'
-                      }
-                    }}
-                    error={errors.headerExpired ? true : false}
-                    defaultValue=""
-                    placeholder="Default input"
-                    id="bootstrap-input"
-                    {...register('headerExpired', { required: true })}
+                <Box sx={{ mt: 3 }}>
+                  <CustomizedAccordions
+                    complete={complete}
+                    numberOfQuestions={+numberOfQuestions}
+                    contentQuestionList={contentQuestion}
+                    handleSetContentQuestion={handleSetContentQuestion}
                   />
-                </FormControl>
-              </Box>
+                </Box>
+              </Grid>
+            </Box>
 
-              <Box sx={{ mt: 3 }}>
-                <FormControl variant="standard" sx={{ width: '100%' }}>
-                  <Typography
-                    sx={{
-                      fontSize: '17px',
-                      fontWeight: 'bold',
-                      color: '#044b7e',
-                      mb: 1
-                    }}
-                  >
-                    Body Text
-                  </Typography>
-                  <TinyEditor
-                    initialValue={getValues('bodyExpired') as string}
-                    limit={9999999999}
-                    title={'bodyExpired'}
-                    handleGetDataFromEditor={handleGetDataFromEditor}
-                  />
-                </FormControl>
-              </Box>
-            </Grid>
+            <Box mt={8} mb={9}>
+              <Grid item md={6}>
+                <Typography variant="h3">PART III: THANK YOU</Typography>
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <LabelInput shrink htmlFor="bootstrap-input">
+                      Header
+                      {errors.headerThankYou && (
+                        <ErrorTitle>*This field is require</ErrorTitle>
+                      )}
+                    </LabelInput>
+                    <BootstrapInput
+                      sx={{
+                        '& .MuiInputBase-input': {
+                          border: '1px solid #ddd',
+                          background: '#fff',
+                          height: '35px'
+                        }
+                      }}
+                      error={errors.headerThankYou ? true : false}
+                      defaultValue=""
+                      placeholder="Default input"
+                      id="bootstrap-input"
+                      {...register('headerThankYou', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '17px',
+                        fontWeight: 'bold',
+                        color: '#044b7e',
+                        mb: 1
+                      }}
+                    >
+                      Body Text
+                    </Typography>
+                    <TinyEditor
+                      initialValue={getValues('bodyThankYou') as string}
+                      limit={9999999999}
+                      title={'bodyThankYou'}
+                      handleGetDataFromEditor={handleGetDataFromEditor}
+                    />
+                  </FormControl>
+                </Box>
+              </Grid>
+            </Box>
+
+            <Box mt={8} mb={9}>
+              <Grid item md={6}>
+                <Typography variant="h3">PART IV: EXPIRED</Typography>
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <LabelInput shrink htmlFor="bootstrap-input">
+                      Header
+                      {errors.headerExpired && (
+                        <ErrorTitle>*This field is require</ErrorTitle>
+                      )}
+                    </LabelInput>
+                    <BootstrapInput
+                      sx={{
+                        '& .MuiInputBase-input': {
+                          border: '1px solid #ddd',
+                          background: '#fff',
+                          height: '35px'
+                        }
+                      }}
+                      error={errors.headerExpired ? true : false}
+                      defaultValue=""
+                      placeholder="Default input"
+                      id="bootstrap-input"
+                      {...register('headerExpired', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+
+                <Box sx={{ mt: 3 }}>
+                  <FormControl variant="standard" sx={{ width: '100%' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '17px',
+                        fontWeight: 'bold',
+                        color: '#044b7e',
+                        mb: 1
+                      }}
+                    >
+                      Body Text
+                    </Typography>
+                    <TinyEditor
+                      initialValue={getValues('bodyExpired') as string}
+                      limit={9999999999}
+                      title={'bodyExpired'}
+                      handleGetDataFromEditor={handleGetDataFromEditor}
+                    />
+                  </FormControl>
+                </Box>
+              </Grid>
+            </Box>
+            <SubmitNav
+              idContentPack={editId}
+              onSubmit={submitFromNav}
+              editMode={editMode}
+              isShowDraftBtn={true}
+              page={'survey'}
+            />
           </Box>
-          <SubmitNav
-            idContentPack={editId}
-            onSubmit={submitFromNav}
-            editMode={editMode}
-            isShowDraftBtn={true}
-            page={'survey'}
-          />
-        </Box>
+        )}
       </Grid>
     </Grid>
   );

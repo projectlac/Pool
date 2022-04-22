@@ -32,10 +32,13 @@ export default function GetDataColumn({ editId, editMode }: PropsEdit) {
               });
 
               let data = res.data.data.lstOutletResponse;
+              console.log(data);
 
-              let tempData = data.map((d, index) => {
-                return { id: d.id, OutletName: d.name };
-              });
+              let tempData = [];
+              if (data !== null)
+                tempData = data.map((d, index) => {
+                  return { id: d.id, OutletName: d.name };
+                });
               let newTemp = temp.filter(
                 (d) => !tempData.map((e) => e.id).includes(d.id)
               );

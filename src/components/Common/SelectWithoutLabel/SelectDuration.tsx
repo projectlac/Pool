@@ -17,7 +17,7 @@ export default function SelectDuration({
   title,
   handleTime
 }: PropsTime) {
-  const [age, setAge] = React.useState<string>('10');
+  const [age, setAge] = React.useState<string>(defaultValue);
 
   React.useEffect(() => {
     setAge(defaultValue);

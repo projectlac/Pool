@@ -18,6 +18,7 @@ import SubmitNav from 'src/components/Common/SubmitNav/SubmitNav';
 import CustomizedTables from 'src/components/Common/Table/CustomizedTables';
 import { PropsEdit } from 'src/models';
 import { fileObject } from 'src/models/fileObject';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function Add({ editId, editMode }: PropsEdit) {
   const { handleOpenToast, handleChangeMessageToast } = useContext(AuthContext);
@@ -26,6 +27,7 @@ function Add({ editId, editMode }: PropsEdit) {
   const [idContentPack, setIdContentPack] = useState<string>(undefined);
 
   const [status, setStatus] = useState<string>('1');
+  const [loading, setLoading] = useState<boolean>(false);
   const handleChange = (event: SelectChangeEvent) => {
     setNumberOfContent(event.target.value);
   };
@@ -105,6 +107,7 @@ function Add({ editId, editMode }: PropsEdit) {
 
   useEffect(() => {
     if (editId) {
+      setLoading(true);
       contentPackApi.getDataById(editId).then((res) => {
         if (res.data.success) {
           let data = res.data.data;
@@ -117,6 +120,7 @@ function Add({ editId, editMode }: PropsEdit) {
           }));
 
           setFileList(tempData);
+          setLoading(false);
         }
       });
     }
@@ -124,104 +128,110 @@ function Add({ editId, editMode }: PropsEdit) {
   return (
     <Grid container>
       <Grid item md={12}>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <Grid item md={6}>
-            <FormControl variant="standard" sx={{ width: '100%' }}>
-              <LabelInput shrink htmlFor="bootstrap-input">
-                Content Pack Name
-              </LabelInput>
-              <BootstrapInput
-                sx={{
-                  '& .MuiInputBase-input': {
-                    border: '1px solid #ddd',
-                    background: '#fff',
-                    height: '35px'
-                  }
-                }}
-                defaultValue=""
-                error={Boolean(errors.contentName)}
-                placeholder="Default input"
-                id="bootstrap-input"
-                {...register('contentName', { required: true })}
-              />
-            </FormControl>
-            <Box sx={{ mt: 3 }}>
-              <Typography
-                sx={{
-                  fontSize: '17px',
-                  fontWeight: 'bold',
-                  color: '#044b7e',
-                  mb: 1
-                }}
-              >
-                Number of Content
-              </Typography>
-              <Select
-                value={numberOfContent}
-                onChange={handleChange}
-                inputProps={{ 'aria-label': 'Without label' }}
-                sx={{
-                  minWidth: 75,
-                  '& .MuiOutlinedInput-input': {
-                    background: '#fff',
-                    padding: '13px',
-                    color: '#000',
-
-                    fontSize: '16px',
-                    alignItems: 'center',
-                    display: 'flex'
-                  },
-                  '& fieldset': {
-                    borderColor: '#ddd'
-                  },
-                  '& .MuiSelect-icon': {
-                    color: '#044b7e'
-                  }
-                }}
-              >
-                <MenuItem value={'1'}>1</MenuItem>
-                <MenuItem value={'2'}>2</MenuItem>
-                <MenuItem value={'3'}>3</MenuItem>
-              </Select>
-            </Box>
-            <Box sx={{ mt: 3 }}>
-              <LabelInput
-                sx={{
-                  fontSize: '17px',
-                  fontWeight: 'bold',
-                  color: '#044b7e',
-                  mb: 1
-                }}
-              >
-                Content Upload
-                <span
-                  style={{
-                    fontSize: '13px',
-                    color: '#999',
-                    fontWeight: 'normal',
-                    marginLeft: '10px'
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+            <Grid item md={6}>
+              <FormControl variant="standard" sx={{ width: '100%' }}>
+                <LabelInput shrink htmlFor="bootstrap-input">
+                  Content Pack Name
+                </LabelInput>
+                <BootstrapInput
+                  sx={{
+                    '& .MuiInputBase-input': {
+                      border: '1px solid #ddd',
+                      background: '#fff',
+                      height: '35px'
+                    }
+                  }}
+                  defaultValue=""
+                  error={Boolean(errors.contentName)}
+                  placeholder="Default input"
+                  id="bootstrap-input"
+                  {...register('contentName', { required: true })}
+                />
+              </FormControl>
+              <Box sx={{ mt: 3 }}>
+                <Typography
+                  sx={{
+                    fontSize: '17px',
+                    fontWeight: 'bold',
+                    color: '#044b7e',
+                    mb: 1
                   }}
                 >
-                  (Please upload in .JPG/ .PNG, max 5MB)
-                </span>
-              </LabelInput>
-              <Box>
-                <CustomizedTables
-                  numberOfContent={numberOfContent}
-                  handleUploadFile={handleUploadFile}
-                  fileList={fileList}
-                />
+                  Number of Content
+                </Typography>
+                <Select
+                  value={numberOfContent}
+                  onChange={handleChange}
+                  inputProps={{ 'aria-label': 'Without label' }}
+                  sx={{
+                    minWidth: 75,
+                    '& .MuiOutlinedInput-input': {
+                      background: '#fff',
+                      padding: '13px',
+                      color: '#000',
+
+                      fontSize: '16px',
+                      alignItems: 'center',
+                      display: 'flex'
+                    },
+                    '& fieldset': {
+                      borderColor: '#ddd'
+                    },
+                    '& .MuiSelect-icon': {
+                      color: '#044b7e'
+                    }
+                  }}
+                >
+                  <MenuItem value={'1'}>1</MenuItem>
+                  <MenuItem value={'2'}>2</MenuItem>
+                  <MenuItem value={'3'}>3</MenuItem>
+                </Select>
               </Box>
-            </Box>
-          </Grid>
-          <SubmitNav
-            idContentPack={idContentPack}
-            page={'content-pack'}
-            onSubmit={submitFromNav}
-            editMode={editMode}
-            isShowDraftBtn={true}
-          />
-        </Box>
+              <Box sx={{ mt: 3 }}>
+                <LabelInput
+                  sx={{
+                    fontSize: '17px',
+                    fontWeight: 'bold',
+                    color: '#044b7e',
+                    mb: 1
+                  }}
+                >
+                  Content Upload
+                  <span
+                    style={{
+                      fontSize: '13px',
+                      color: '#999',
+                      fontWeight: 'normal',
+                      marginLeft: '10px'
+                    }}
+                  >
+                    (Please upload in .JPG/ .PNG, max 5MB)
+                  </span>
+                </LabelInput>
+                <Box>
+                  <CustomizedTables
+                    numberOfContent={numberOfContent}
+                    handleUploadFile={handleUploadFile}
+                    fileList={fileList}
+                  />
+                </Box>
+              </Box>
+            </Grid>
+            <SubmitNav
+              idContentPack={idContentPack}
+              page={'content-pack'}
+              onSubmit={submitFromNav}
+              editMode={editMode}
+              isShowDraftBtn={true}
+            />
+          </Box>
+        )}
       </Grid>
     </Grid>
   );
