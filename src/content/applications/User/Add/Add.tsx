@@ -88,7 +88,7 @@ function Add({ editId, editMode }: PropsEdit) {
                   }}
                   error={errors.email ? true : false}
                   defaultValue=""
-                  disabled={!editId ? true : false}
+                  disabled={editId ? true : false}
                   type="email"
                   placeholder="Email"
                   id="bootstrap-input"

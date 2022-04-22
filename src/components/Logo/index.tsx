@@ -33,7 +33,9 @@ function Logo() {
             }}
           >
             <img src={logo} alt="" width={'auto'} height={`88px`} />
-            <Typography sx={{ fontSize: '17px' }}>Singapore Pools</Typography>
+            <Typography sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+              Singapore Pools
+            </Typography>
           </Box>
         </LogoTextWrapper>
       </Hidden>

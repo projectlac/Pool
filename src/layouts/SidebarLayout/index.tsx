@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 
 import Sidebar from './Sidebar';
 import Header from './Header';
+import StatusMaintenance from 'src/content/pages/Status/Maintenance';
 
 interface SidebarLayoutProps {
   children?: ReactNode;
@@ -35,12 +36,18 @@ const SidebarLayout: FC<SidebarLayoutProps> = () => {
   return (
     <>
       <Header />
-      <Sidebar />
-      <MainWrapper>
-        <MainContent>
-          <Outlet />
-        </MainContent>
-      </MainWrapper>
+      {process.env.REACT_APP_MAINTENANCE_MODE === 'true' ? (
+        <StatusMaintenance />
+      ) : (
+        <>
+          <Sidebar />
+          <MainWrapper>
+            <MainContent>
+              <Outlet />
+            </MainContent>
+          </MainWrapper>
+        </>
+      )}
     </>
   );
 };

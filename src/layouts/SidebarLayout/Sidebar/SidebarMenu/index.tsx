@@ -1,8 +1,10 @@
 import { List } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import SidebarMenuItem from './item';
 import menuItems, { MenuItem } from './items';
+import jwt_decode from 'jwt-decode';
 
 const MenuWrapper = styled(List)(
   ({ theme }) => `
@@ -210,10 +212,23 @@ const reduceChildRoutes = ({
 
 function SidebarMenu() {
   const location = useLocation();
+  const token = localStorage.getItem('access_token');
+  const getRoleFromToken = useMemo(() => {
+    var decoded = jwt_decode(token) as any;
 
+    if (decoded) return decoded.role;
+  }, [token]);
+
+  const setMenuRole = () => {
+    let tempMenu = [...menuItems];
+    if (getRoleFromToken !== 'Admin') {
+      tempMenu[0].items = tempMenu[0].items.filter(({ role }) => !role);
+    }
+    return tempMenu;
+  };
   return (
     <>
-      {menuItems.map((section, index) => (
+      {setMenuRole().map((section, index) => (
         <MenuWrapper key={index}>
           {renderSidebarMenuItems({
             items: section.items,

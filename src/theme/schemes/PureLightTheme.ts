@@ -1064,7 +1064,7 @@ export const PureLightTheme = createTheme({
   },
   typography: {
     fontFamily: [
-      'farro',
+      'Open Sans',
       'Inter',
       '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"'
     ].join(','),

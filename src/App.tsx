@@ -1,12 +1,14 @@
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Box, CssBaseline } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRoutes } from 'react-router-dom';
 import './assets/styles/global.scss';
 import Toast from './components/Common/Toast/Toast';
 import routes from './router';
 import ThemeProvider from './theme/ThemeProvider';
+import jwt_decode from 'jwt-decode';
+
 export const AuthContext = React.createContext(null);
 const App = () => {
   const [isLogin, setIsLogin] = useState<boolean>(
@@ -57,8 +59,14 @@ const App = () => {
     handleChangeMessageToast
   };
 
+  const token = localStorage.getItem('access_token');
+  const getRoleFromToken = useMemo(() => {
+    var decoded = jwt_decode(token) as any;
+
+    if (decoded) return decoded.role;
+  }, [token]);
   const content = useRoutes(
-    routes(isLogin),
+    routes(isLogin, getRoleFromToken),
     `${process.env.REACT_APP_BASE_NAME}`
   );
 

@@ -14,10 +14,12 @@ export interface MenuItem {
   badge?: string;
   items?: MenuItem[];
   name: string;
+  role?: string;
 }
 
 export interface MenuItems {
   items: MenuItem[];
+  role?: string;
 }
 
 const menuItems: MenuItems[] = [
@@ -56,7 +58,8 @@ const menuItems: MenuItems[] = [
       {
         name: 'User',
         icon: AllOutIcon,
-        link: `${process.env.REACT_APP_BASE_NAME}/user`
+        link: `${process.env.REACT_APP_BASE_NAME}/user`,
+        role: 'Admin'
       }
     ]
   }

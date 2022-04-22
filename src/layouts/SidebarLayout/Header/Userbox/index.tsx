@@ -31,7 +31,8 @@ const UserBoxText = styled(Box)(
 
 const UserBoxLabel = styled(Typography)(
   ({ theme }) => `
-        font-weight: ${theme.typography.fontWeightBold};
+        font-weight: normal;
+        font-size:16px;
         color: ${theme.palette.primary.main};
         display: block;
 `
@@ -65,7 +66,8 @@ function HeaderUserbox() {
   const token = localStorage.getItem('access_token');
   const getUserNameFromToken = useMemo(() => {
     var decoded = jwt_decode(token) as any;
-    if (decoded) return decoded.name;
+
+    if (decoded) return decoded.email;
   }, [token]);
 
   return (

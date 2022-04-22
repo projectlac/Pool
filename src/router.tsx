@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useMemo } from 'react';
 import { Navigate } from 'react-router-dom';
 // import { PartialRouteObject } from 'react-router';
 
@@ -6,6 +6,7 @@ import SidebarLayout from 'src/layouts/SidebarLayout';
 import BaseLayout from 'src/layouts/BaseLayout';
 
 import SuspenseLoader from 'src/components/SuspenseLoader';
+import jwt_decode from 'jwt-decode';
 
 const Loader = (Component) => (props) =>
   (
@@ -101,7 +102,7 @@ const StatusMaintenance = Loader(
   lazy(() => import('src/content/pages/Status/Maintenance'))
 );
 
-const routes = (isLogin) => [
+const routes = (isLogin, role) => [
   {
     path: '*',
     element: <BaseLayout />,
@@ -163,6 +164,7 @@ const routes = (isLogin) => [
       }
     ]
   },
+
   {
     path: 'outlet',
     element: isLogin ? (
@@ -256,7 +258,14 @@ const routes = (isLogin) => [
   {
     path: 'user',
     element: isLogin ? (
-      <SidebarLayout />
+      role === 'Admin' ? (
+        <SidebarLayout />
+      ) : (
+        <Navigate
+          to={`${process.env.REACT_APP_BASE_NAME}/dashboards`}
+          replace
+        />
+      )
     ) : (
       <Navigate to={`${process.env.REACT_APP_BASE_NAME}/login`} replace />
     ),

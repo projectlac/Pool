@@ -7,7 +7,7 @@ const ErrorTitle = styled(Typography)(({ theme }) => ({
   color: theme.palette.error.main,
   // Use the system font instead of the default Roboto font.
   fontFamily: [
-    'farro',
+    'Open Sans',
     'Inter',
     '-apple-system',
     'BlinkMacSystemFont',

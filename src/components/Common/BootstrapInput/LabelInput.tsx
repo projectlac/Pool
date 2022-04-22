@@ -7,7 +7,7 @@ const LabelInput = styled(InputLabel)(({ theme }) => ({
   color: theme.palette.primary.main,
   // Use the system font instead of the default Roboto font.
   fontFamily: [
-    'farro',
+    'Open Sans',
     'Inter',
     '-apple-system',
     'BlinkMacSystemFont',
