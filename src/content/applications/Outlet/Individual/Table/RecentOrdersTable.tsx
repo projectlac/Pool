@@ -113,7 +113,7 @@ const RecentOrdersTable: FC<RecentOrdersTableProps> = ({
                   />
                 </TableCell>
                 <TableCell>Outlet Name</TableCell>
-                <TableCell>Contact Pack Name Assigned</TableCell>
+                <TableCell>Content Pack Name Assigned</TableCell>
                 <TableCell>Survey Name Assigned</TableCell>
                 <TableCell>Group Assigned</TableCell>
                 <TableCell>Last Updated</TableCell>
